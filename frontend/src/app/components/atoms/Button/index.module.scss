@@ -1,0 +1,14 @@
+.base {
+  width: 330px;
+  background-color: rgba(var(--color-bg-accent-darkBrown));
+  border-radius: 8px;
+  padding: 10px 30px;
+  font-size: 24px;
+  color: rgba(var(--color-bg-primary));
+  font-weight: bold;
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+}

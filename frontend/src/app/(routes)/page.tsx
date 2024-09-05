@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import styles from './page.module.css';
+import Button from '../components/atoms/Button/Index';
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
           <code className={styles.code}>src/app/page.tsx</code>
         </p>
         <div>
+          <Button variant="base">minoshiba</Button>
           <a
             href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
             target="_blank"

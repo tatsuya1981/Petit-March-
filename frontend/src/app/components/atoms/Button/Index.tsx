@@ -8,7 +8,7 @@ interface ButtonProps {
 }
 
 const Button = ({ variant = 'base', children, ...props }: ButtonProps) => {
-  const className = `${styles.button} ${styles[variant]}`;
+  const className = styles[variant];
   return (
     <button className={className} {...props}>
       {children}

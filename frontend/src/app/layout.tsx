@@ -50,7 +50,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body className={zenMaruGothic.className}>{children}</body>
+      <body className={`${zenMaruGothic.className} ${zenMaruGothic.variable}`}>{children}</body>
     </html>
   );
 }

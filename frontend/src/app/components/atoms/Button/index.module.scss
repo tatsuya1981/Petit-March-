@@ -1,5 +1,6 @@
 .base {
-  width: 330px;
+  font-family: var(--font-zen-maru-gothic);
+  min-width: 330px;
   background-color: rgba(var(--color-bg-accent-darkBrown));
   border-radius: 8px;
   padding: 10px 30px;
@@ -11,4 +12,45 @@
     1px -1px 0 #000,
     -1px 1px 0 #000,
     1px 1px 0 #000;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+.edit {
+  font-family: var(--font-zen-maru-gothic);
+  width: 100px;
+  width: 100px;
+  background-color: rgba(var(--color-bg-accent-darkBrown));
+  border-radius: 100px;
+  font-size: 24px;
+  color: rgba(var(--color-bg-primary));
+  font-weight: bold;
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+.delete {
+  font-family: var(--font-zen-maru-gothic);
+  width: 100px;
+  background-color: rgba(var(--color-bg-accent-red));
+  border-radius: 100px;
+  font-size: 24px;
+  color: rgba(255, 255, 255);
+  font-weight: bold;
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+
+  &:hover {
+    opacity: 0.7;
+  }
 }

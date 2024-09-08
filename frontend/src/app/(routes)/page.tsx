@@ -1,7 +1,8 @@
 import Image from 'next/image';
-import styles from './page.module.css';
+import styles from './page.module.scss';
 import Button from '../components/atoms/Button/Index';
 import Header from '../components/organisms/header/Index';
+import HeaderTitlesLogin from '../components/molecules/header_login';
 
 export default function Home() {
   return (
@@ -35,7 +36,7 @@ export default function Home() {
         </div>
 
         <div className={styles.center}>
-          <Image className={styles.logo} src="PetitMarche.svg" alt="Next.js Logo" width={200} height={200} priority />
+          <Image className={styles.logo} src="/PetitMarche.svg" alt="Next.js Logo" width={200} height={200} priority />
         </div>
 
         <div className={styles.grid}>

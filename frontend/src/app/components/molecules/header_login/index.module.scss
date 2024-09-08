@@ -1,0 +1,12 @@
+.container {
+  width: 100vw;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 40px;
+  nav {
+    color: rgba(var(--color-bg-primary));
+    display: flex;
+    align-items: flex-end;
+  }
+}

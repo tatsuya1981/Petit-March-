@@ -17,8 +17,8 @@ export const metadata: Metadata = {
     initialScale: 1,
   },
   icons: {
-    icon: '/icon.ico',
-    apple: '/icon.ico',
+    icon: '/logo.png',
+    apple: '/logo.png',
   },
   formatDetection: {
     telephone: false,

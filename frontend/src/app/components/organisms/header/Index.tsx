@@ -1,9 +1,10 @@
+import HeaderTitlesLogin from '../../molecules/header_login';
 import styles from './index.module.scss';
 
 const Header = () => {
   return (
     <div className={styles.header}>
-      <p>Next.js</p>
+      <HeaderTitlesLogin />
     </div>
   );
 };

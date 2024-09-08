@@ -17,8 +17,8 @@ export const metadata: Metadata = {
     initialScale: 1,
   },
   icons: {
-    icon: '/icon.ico',
-    apple: '/icon.ico',
+    icon: '/convenience.png',
+    apple: '/convenience.png',
   },
   formatDetection: {
     telephone: false,
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     siteName: 'Petit Marche',
     images: [
       {
-        url: '/frontend/public/logo.png',
+        url: '/frontend/public/convenience.png',
       },
     ],
     locale: 'ja_JP',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     description: 'コンビニエンスストアの商品レビューサイト',
-    images: ['/frontend/public/logo.png'],
+    images: ['/frontend/public/convenience.png'],
   },
 };
 

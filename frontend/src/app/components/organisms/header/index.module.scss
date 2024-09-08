@@ -1,11 +1,6 @@
 .header {
-  display: flex;
+  // display: flex;
   width: 100vw;
   height: 80px;
   background-color: rgba(var(--color-bg-accent-darkBrown));
-  p {
-    color: rgba(var(--color-bg-primary));
-    font-size: 24px;
-    font-weight: bold;
-  }
 }

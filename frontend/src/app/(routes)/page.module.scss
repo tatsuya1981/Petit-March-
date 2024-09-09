@@ -1,3 +1,5 @@
+@import '../styles/mixins';
+
 .main {
   display: flex;
   flex-direction: column;
@@ -6,6 +8,9 @@
   padding: 5rem 3rem;
   min-height: 100vh;
   background-color: rgba(var(--color-bg-primary));
+  @include min('sm') {
+    padding: 3rem 2rem;
+  }
 }
 
 .logo {
@@ -16,6 +21,9 @@
 
 .mainWordWrapper {
   margin-bottom: 130px;
+  @include min('sm') {
+    margin-bottom: 30px;
+  }
 }
 
 .mainWord {
@@ -25,6 +33,10 @@
   font-size: 32px;
   padding-bottom: 30px;
   text-decoration: underline;
+  @include min('sm') {
+    font-size: 20px;
+    padding-bottom: 20px;
+  }
 }
 
 .wordWrapper {
@@ -35,10 +47,22 @@
   display: inline-block;
   width: 100%;
   text-align: center;
+  padding-bottom: 1rem;
+
+  @include min('sm') {
+    font-size: 14px;
+  }
+}
+
+.word:nth-child(2) {
+  padding-bottom: 0;
 }
 
 .image {
   position: relative;
+  @include min('sm') {
+    width: 300px;
+  }
 }
 
 .description {

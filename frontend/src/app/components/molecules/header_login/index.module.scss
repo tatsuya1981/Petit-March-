@@ -6,18 +6,30 @@
   display: flex;
   justify-content: space-between;
   padding: 0 3rem;
+  @include min('md') {
+    padding: 0 2rem;
+  }
+  @include min('sm') {
+    padding: 0 1rem;
+  }
 }
 
 .logoContainer {
   display: flex;
   align-items: center;
   height: 100%;
-  max-width: 100px;
+  width: 100vw;
 }
 
 .logo {
   object-fit: contain;
   max-height: 100%;
+  @include min('md') {
+    max-height: 70%;
+  }
+  @include min('sm') {
+    max-height: 60%;
+  }
 }
 
 .nav {
@@ -27,8 +39,12 @@
 }
 
 .link {
+  display: inline-block;
   margin-left: 1rem;
   white-space: nowrap;
+  @include min('sm') {
+    font-size: 14px;
+  }
 }
 
 .link:first-child {

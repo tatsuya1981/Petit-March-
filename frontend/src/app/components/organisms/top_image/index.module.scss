@@ -1,8 +1,11 @@
+@import '../../../styles/mixins';
+
 .container {
   width: 100vw;
   height: 500px;
   position: relative;
 }
+
 .image {
   position: absolute;
   top: 0;
@@ -12,6 +15,7 @@
   opacity: 0;
   animation: image-switch 40s infinite;
 }
+
 .src0 {
   animation-delay: 0s;
 }
@@ -24,6 +28,7 @@
 .src3 {
   animation-delay: 30s;
 }
+
 @keyframes image-switch {
   0% {
     opacity: 0;
@@ -55,11 +60,14 @@
   color: white;
   text-align: center;
 }
+
 .Catchphrase {
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
   padding-bottom: 70px;
 }
+
 .text {
   display: flex;
   justify-content: center;
@@ -70,17 +78,31 @@
     -1px 1px 0 #000,
     1px 1px 0 #000;
 }
+
 .word {
   letter-spacing: 0.06em;
   font-size: 40px;
   transform: translateY(2em);
   animation: text-animation 1s forwards;
+  @include min('md') {
+    font-size: 32px;
+  }
+  @include min('sm') {
+    font-size: 22px;
+  }
 }
+
 .wordBlocks {
   letter-spacing: 0.06em;
   font-size: 40px;
-  transform: translateY(2em);
+  transform: translateY(3em);
   animation: text-animation 1s forwards;
+  @include min('md') {
+    font-size: 32px;
+  }
+  @include min('sm') {
+    font-size: 22px;
+  }
 }
 
 .word:nth-child(1) {

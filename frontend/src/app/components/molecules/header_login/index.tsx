@@ -5,14 +5,14 @@ import Image from 'next/image';
 const HeaderTitlesLogin = () => {
   return (
     <div className={styles.container}>
-      <Link href="/">
+      <Link href="/" className={styles.logoContainer}>
         <Image
           src="/PetitMarche.svg"
           alt="PetitMarche Logo"
           className={styles.logo}
           width={100}
           height={100}
-          layout="responsive"
+          style={{ width: 'auto', height: '100%' }}
           priority
         />
       </Link>

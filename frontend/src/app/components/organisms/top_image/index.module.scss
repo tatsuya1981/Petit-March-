@@ -85,7 +85,7 @@
   transform: translateY(2em);
   animation: text-animation 1s forwards;
   @include min('md') {
-    font-size: 32px;
+    font-size: 28px;
   }
   @include min('sm') {
     font-size: 22px;
@@ -98,7 +98,7 @@
   transform: translateY(3em);
   animation: text-animation 1s forwards;
   @include min('md') {
-    font-size: 32px;
+    font-size: 28px;
   }
   @include min('sm') {
     font-size: 22px;

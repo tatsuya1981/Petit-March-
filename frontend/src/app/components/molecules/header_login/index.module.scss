@@ -1,21 +1,40 @@
+@import '../../../styles/mixins';
+
 .container {
   width: 100vw;
   height: 80px;
   display: flex;
   justify-content: space-between;
-  padding: 0 40px;
+  padding: 0 3rem;
 }
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  max-width: 100px;
+}
+
+.logo {
+  object-fit: contain;
+  max-height: 100%;
+}
+
 .nav {
   color: rgba(var(--color-bg-primary));
   display: flex;
   align-items: flex-end;
 }
+
 .link {
   margin-left: 1rem;
+  white-space: nowrap;
 }
+
 .link:first-child {
   margin-left: 0;
 }
+
 .link:hover {
   opacity: 0.7;
 }

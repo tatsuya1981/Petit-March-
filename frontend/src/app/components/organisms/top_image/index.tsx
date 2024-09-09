@@ -11,7 +11,7 @@ const TopImage = () => {
     <div className={styles.container}>
       {images.map((src, index) => (
         <div key={src} className={`${styles.image} ${styles[`src${index}`]}`}>
-          <Image src={src} alt="main_image" layout="fill" objectFit="cover" priority={index === 0} />
+          <Image src={src} alt="main_image" fill style={{ objectFit: 'cover' }} priority={index === 0} />
         </div>
       ))}
       <div className={styles.overlay}>

@@ -13,20 +13,19 @@
   right: 0;
   bottom: 0;
   opacity: 0;
-  animation: image-switch 40s infinite;
+  animation: image-switch 28s infinite;
 }
-
 .src0 {
   animation-delay: 0s;
 }
 .src1 {
-  animation-delay: 10s;
+  animation-delay: 7s;
 }
 .src2 {
-  animation-delay: 20s;
+  animation-delay: 14s;
 }
 .src3 {
-  animation-delay: 30s;
+  animation-delay: 21s;
 }
 
 @keyframes image-switch {
@@ -36,7 +35,7 @@
   5% {
     opacity: 1;
   }
-  25% {
+  30% {
     opacity: 1;
   }
   35% {
@@ -85,7 +84,7 @@
   transform: translateY(2em);
   animation: text-animation 1s forwards;
   @include min('md') {
-    font-size: 32px;
+    font-size: 28px;
   }
   @include min('sm') {
     font-size: 22px;
@@ -98,7 +97,7 @@
   transform: translateY(3em);
   animation: text-animation 1s forwards;
   @include min('md') {
-    font-size: 32px;
+    font-size: 28px;
   }
   @include min('sm') {
     font-size: 22px;

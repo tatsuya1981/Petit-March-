@@ -1,4 +1,4 @@
-import HeaderTitlesLogin from '../../molecules/header_login';
+import HeaderTitlesLogin from '../../molecules/headerLogin';
 import styles from './index.module.scss';
 
 const Header = () => {

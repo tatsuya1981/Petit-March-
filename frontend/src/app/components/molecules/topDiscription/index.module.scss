@@ -1,0 +1,44 @@
+@import '../../../styles/mixins';
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1000px;
+  height: 250px;
+  border: 5px dotted rgb(209, 199, 134);
+  padding: 5px;
+}
+
+.imageContainer {
+  width: 400px;
+}
+
+.textContainer {
+  width: 600px;
+  height: 220px;
+  padding-left: 1rem;
+}
+
+.topText {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+  padding-bottom: 30px;
+}
+
+.textWrapper {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1rem;
+  font-size: 15px;
+}
+.text:last-child {
+  padding-bottom: 0;
+}

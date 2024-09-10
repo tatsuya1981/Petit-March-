@@ -1,3 +1,5 @@
+@import '../../../styles/mixins';
+
 .base {
   font-family: var(--font-zen-maru-gothic);
   min-width: 330px;
@@ -71,5 +73,13 @@
   &:hover {
     background-color: rgba(var(--color-bg-accent-brown));
     color: white;
+  }
+  @include min('md') {
+    min-width: 200px;
+    font-size: 18px;
+  }
+  @include min('sm') {
+    min-width: 200px;
+    font-size: 14px;
   }
 }

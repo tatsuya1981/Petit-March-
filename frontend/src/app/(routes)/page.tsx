@@ -2,8 +2,10 @@ import Image from 'next/image';
 import styles from './page.module.scss';
 import Button from '../components/atoms/Button/Index';
 import Header from '../components/organisms/header/Index';
-import HeaderTitlesLogin from '../components/molecules/header_login';
-import TopImage from '../components/organisms/top_image';
+import HeaderTitlesLogin from '../components/molecules/headerLogin';
+import TopImage from '../components/organisms/topImage';
+import { TopDescriptionList } from '../components/molecules/topDiscription';
+import ScrollComponent from '../components/scrollAnimation';
 
 export default function Home() {
   return (
@@ -22,6 +24,13 @@ export default function Home() {
           <p className={styles.word}>そんなコンビニ商品に対し情報を共有することを目的としたアプリです</p>
         </div>
         <Image className={styles.image} src="/store4.jpg" alt="店舗内のイメージ" width={350} height={285} />
+        <div className={styles.wordWrapperBottom}>
+          <p className={styles.word}>良かった商品、失敗しちゃった商品などなど全部ひっくるめてレビュー</p>
+          <p className={styles.word}>みんなで教え合ってより良いコンビニライフを送ろう！</p>
+        </div>
+        <ScrollComponent>
+          <TopDescriptionList />
+        </ScrollComponent>
       </main>
     </>
   );

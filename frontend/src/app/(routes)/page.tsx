@@ -2,8 +2,8 @@ import Image from 'next/image';
 import styles from './page.module.scss';
 import Button from '../components/atoms/Button/Index';
 import Header from '../components/organisms/header/Index';
-import HeaderTitlesLogin from '../components/molecules/header_login';
-import TopImage from '../components/organisms/top_image';
+import HeaderTitlesLogin from '../components/molecules/headerLogin';
+import TopImage from '../components/organisms/topImage';
 
 export default function Home() {
   return (

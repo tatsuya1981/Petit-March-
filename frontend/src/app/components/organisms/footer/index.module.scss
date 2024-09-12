@@ -1,0 +1,43 @@
+@import '../../../styles/mixins';
+
+.container {
+  width: 100vw;
+  height: auto;
+  min-height: 180px;
+  background-color: rgba(var(--color-bg-accent-darkBrown));
+}
+
+.areaWrapper {
+  margin: 1em 2rem;
+}
+
+.logoWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  object-fit: contain;
+  max-width: 200px;
+  height: auto;
+  @include min('md') {
+    max-width: 80%;
+    max-height: 80px;
+  }
+  @include min('sm') {
+    max-width: 60%;
+    margin-bottom: 20px;
+  }
+}
+
+.logoGithub {
+  align-self: flex-end;
+  @include min('sm') {
+    align-self: flex-start;
+    margin-bottom: 20px;
+  }
+}
+
+.menu {
+  color: rgba(var(--color-bg-primary));
+}

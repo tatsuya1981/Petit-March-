@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import styles from './index.module.scss';
 import FooterMenu from '../../molecules/footerMenu';
+import Link from 'next/link';
 
 const Footer = () => {
   return (
@@ -15,7 +16,16 @@ const Footer = () => {
             height={100}
             priority
           />
-          <Image className={styles.logoGithub} src="/github.svg" alt="当サイトのロゴ" width={50} height={50} priority />
+          <Link href="https://github.com/tatsuya1981" className={styles.link}>
+            <Image
+              className={styles.logoGithub}
+              src="/github.svg"
+              alt="当サイトのロゴ"
+              width={50}
+              height={50}
+              priority
+            />
+          </Link>
         </div>
         <div className={styles.menu}>
           <FooterMenu />

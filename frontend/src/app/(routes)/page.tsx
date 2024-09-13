@@ -4,8 +4,11 @@ import Button from '../components/atoms/Button/Index';
 import Header from '../components/organisms/header/Index';
 import HeaderTitlesLogin from '../components/molecules/headerLogin';
 import TopImage from '../components/organisms/topImage';
-import { TopDescriptionList } from '../components/molecules/topDiscription';
+import { TopDescriptionList, TopDescriptionPost, TopDescriptionRanking } from '../components/molecules/topDiscription';
 import ScrollComponent from '../components/scrollAnimation';
+import BottomImage from '../components/organisms/bottomImage';
+import FooterMenu from '../components/molecules/footerMenu';
+import Footer from '../components/organisms/footer/Index';
 
 export default function Home() {
   return (
@@ -28,9 +31,23 @@ export default function Home() {
           <p className={styles.word}>良かった商品、失敗しちゃった商品などなど全部ひっくるめてレビュー</p>
           <p className={styles.word}>みんなで教え合ってより良いコンビニライフを送ろう！</p>
         </div>
-        <ScrollComponent>
-          <TopDescriptionList />
-        </ScrollComponent>
+        <div className={styles.listComponent}>
+          <ScrollComponent>
+            <TopDescriptionList />
+          </ScrollComponent>
+        </div>
+        <div className={styles.postComponent}>
+          <ScrollComponent>
+            <TopDescriptionPost />
+          </ScrollComponent>
+        </div>
+        <div className={styles.rankingComponent}>
+          <ScrollComponent>
+            <TopDescriptionRanking />
+          </ScrollComponent>
+        </div>
+        <BottomImage />
+        <Footer />
       </main>
     </>
   );

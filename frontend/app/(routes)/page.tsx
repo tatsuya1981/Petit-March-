@@ -1,17 +1,13 @@
 import Image from 'next/image';
 import styles from './page.module.scss';
-import Header from '../components/layouts/header/Index';
 import ScrollComponent from '../components/elements/scrollAnimation';
-import Footer from '../components/layouts/footer/Index';
 import * as Top from '../../features/top/components/Index';
-import ScrollToTop from '../components/elements/scrollToTop';
 
 export default function Home() {
   return (
     <>
-      <Header />
       <Top.Catchphrase />
-      <main className={styles.main}>
+      <div className={styles.main}>
         <Image className={styles.logo} src="/PetitMarche.svg" alt="当サイトのロゴ" width={200} height={200} priority />
         <div className={styles.mainWordWrapper}>
           <h2 className={styles.mainWord}>今度発売される新商品　気にはなるけど実際どうなの？！</h2>
@@ -43,9 +39,7 @@ export default function Home() {
           </ScrollComponent>
         </div>
         <Top.SubPhrase />
-      </main>
-      <Footer />
-      <ScrollToTop />
+      </div>
     </>
   );
 }

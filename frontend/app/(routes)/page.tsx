@@ -1,20 +1,16 @@
 import Image from 'next/image';
 import styles from './page.module.scss';
-import Button from '../components/atoms/Button/Index';
-import Header from '../components/organisms/header/Index';
-import HeaderTitlesLogin from '../components/molecules/headerLogin';
-import TopImage from '../components/organisms/topImage';
-import { TopDescriptionList, TopDescriptionPost, TopDescriptionRanking } from '../components/molecules/topDiscription';
-import ScrollComponent from '../components/scrollAnimation';
-import BottomImage from '../components/organisms/bottomImage';
-import FooterMenu from '../components/molecules/footerMenu';
-import Footer from '../components/organisms/footer/Index';
+import Header from '../components/layouts/header/Index';
+import ScrollComponent from '../components/elements/scrollAnimation';
+import Footer from '../components/layouts/footer/Index';
+import * as Top from '../../features/top/components/Index';
+import ScrollToTop from '../components/elements/scrollToTop';
 
 export default function Home() {
   return (
     <>
       <Header />
-      <TopImage />
+      <Top.Catchphrase />
       <main className={styles.main}>
         <Image className={styles.logo} src="/PetitMarche.svg" alt="当サイトのロゴ" width={200} height={200} priority />
         <div className={styles.mainWordWrapper}>
@@ -33,22 +29,23 @@ export default function Home() {
         </div>
         <div className={styles.listComponent}>
           <ScrollComponent>
-            <TopDescriptionList />
+            <Top.CardList />
           </ScrollComponent>
         </div>
         <div className={styles.postComponent}>
           <ScrollComponent>
-            <TopDescriptionPost />
+            <Top.CardPost />
           </ScrollComponent>
         </div>
         <div className={styles.rankingComponent}>
           <ScrollComponent>
-            <TopDescriptionRanking />
+            <Top.CardRanking />
           </ScrollComponent>
         </div>
-        <BottomImage />
-        <Footer />
+        <Top.SubPhrase />
       </main>
+      <Footer />
+      <ScrollToTop />
     </>
   );
 }

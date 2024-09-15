@@ -2,10 +2,10 @@ import React from 'react';
 import styles from './index.module.scss';
 import Image from 'next/image';
 import Link from 'next/link';
-import Button from '../../atoms/Button/Index';
-import { ScrollComponentY } from '../../scrollAnimation';
+import Button from '../../../../app/components/elements/button/Index';
+import { ScrollComponentY } from '../../../../app/components/elements/scrollAnimation';
 
-const BottomImage = () => {
+const SubPhrase = () => {
   return (
     <div className={styles.container}>
       <Image
@@ -29,4 +29,4 @@ const BottomImage = () => {
   );
 };
 
-export default BottomImage;
+export default SubPhrase;

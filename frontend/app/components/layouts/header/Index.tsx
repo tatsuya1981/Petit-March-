@@ -1,0 +1,35 @@
+import styles from './index.module.scss';
+import Image from 'next/image';
+import Link from 'next/link';
+
+const Header = () => {
+  return (
+    <div className={styles.header}>
+      <div className={styles.container}>
+        <div className={styles.logoWrapper}>
+          <Link href="/" className={styles.logoLink}>
+            <Image
+              src="/PetitMarche.svg"
+              alt="PetitMarche Logo"
+              className={styles.logo}
+              width={100}
+              height={100}
+              style={{ width: 'auto', height: '100%' }}
+              priority
+            />
+          </Link>
+        </div>
+        <nav className={styles.nav}>
+          <Link href="" className={styles.link}>
+            新規登録
+          </Link>
+          <Link href="" className={styles.link}>
+            ログイン
+          </Link>
+        </nav>
+      </div>
+    </div>
+  );
+};
+
+export default Header;

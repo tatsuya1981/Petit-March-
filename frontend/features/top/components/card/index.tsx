@@ -1,7 +1,7 @@
 import styles from './index.module.scss';
 import Image from 'next/image';
 
-export const TopDescriptionList = () => {
+export const CardList = () => {
   return (
     <div className={styles.container}>
       <div className={styles.imageContainer}>
@@ -17,7 +17,7 @@ export const TopDescriptionList = () => {
   );
 };
 
-export const TopDescriptionPost = () => {
+export const CardPost = () => {
   return (
     <div className={styles.container}>
       <div className={styles.imageContainer}>
@@ -33,7 +33,7 @@ export const TopDescriptionPost = () => {
   );
 };
 
-export const TopDescriptionRanking = () => {
+export const CardRanking = () => {
   return (
     <div className={styles.container}>
       <div className={styles.imageContainer}>

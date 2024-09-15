@@ -2,11 +2,11 @@ import React from 'react';
 import styles from './index.module.scss';
 import Image from 'next/image';
 import Link from 'next/link';
-import Button from '../../atoms/Button/Index';
+import Button from '../../../../app/components/elements/button/Index';
 
 const images = ['/store0.jpg', '/store1.jpg', '/store2.jpg', '/store3.jpg'];
 
-const TopImage = () => {
+const Catchphrase = () => {
   return (
     <div className={styles.container}>
       {images.map((src, index) => (
@@ -39,4 +39,4 @@ const TopImage = () => {
   );
 };
 
-export default TopImage;
+export default Catchphrase;

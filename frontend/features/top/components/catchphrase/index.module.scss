@@ -60,7 +60,7 @@
   text-align: center;
 }
 
-.Catchphrase {
+.catchphrase {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -141,5 +141,34 @@
   }
   100% {
     transform: translateY(0);
+  }
+}
+
+.button {
+  font-family: var(--font-zen-maru-gothic);
+  min-width: 330px;
+  background-color: rgba(var(--color-bg-accent-darkBrown));
+  border-radius: 8px;
+  padding: 10px 30px;
+  font-size: 24px;
+  color: rgba(var(--color-bg-primary));
+  font-weight: bold;
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+
+  &:hover {
+    background-color: rgba(var(--color-bg-accent-brown));
+    color: white;
+  }
+  @include min('md') {
+    min-width: 200px;
+    font-size: 18px;
+  }
+  @include min('sm') {
+    min-width: 200px;
+    font-size: 14px;
   }
 }

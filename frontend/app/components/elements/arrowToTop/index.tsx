@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import styles from './index.module.scss';
 
-const ScrollToTop = (): JSX.Element => {
+const ArrowToTop = (): JSX.Element => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -44,4 +44,4 @@ const ScrollToTop = (): JSX.Element => {
   );
 };
 
-export default ScrollToTop;
+export default ArrowToTop;

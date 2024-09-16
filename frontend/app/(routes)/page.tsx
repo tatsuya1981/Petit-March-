@@ -1,14 +1,15 @@
 import Image from 'next/image';
 import styles from './page.module.scss';
-import ScrollComponent from '../components/elements/scrollAnimation';
+import ScrollComponent from '@/components/elements/scrollAnimation';
 import * as Top from '../../features/top/components/Index';
+import PetitMarche from '@/images/PetitMarche.svg';
 
 export default function Home() {
   return (
     <>
       <Top.Catchphrase />
-      <div className={styles.main}>
-        <Image className={styles.logo} src="/PetitMarche.svg" alt="当サイトのロゴ" width={200} height={200} priority />
+      <main className={styles.main}>
+        <Image className={styles.logo} src={PetitMarche} alt="当サイトのロゴ" width={200} height={200} priority />
         <div className={styles.mainWordWrapper}>
           <h2 className={styles.mainWord}>今度発売される新商品　気にはなるけど実際どうなの？！</h2>
           <h2 className={styles.mainWord}>気になる商品あるけど、失敗したらやだなぁ・・・</h2>
@@ -39,7 +40,7 @@ export default function Home() {
           </ScrollComponent>
         </div>
         <Top.SubPhrase />
-      </div>
+      </main>
     </>
   );
 }

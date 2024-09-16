@@ -22,7 +22,7 @@ const SubPhrase = () => {
           <h3 className={styles.text}>参加してみませんか？</h3>
         </ScrollComponentY>
         <Link href="" className={styles.link}>
-          <Button variant="topImage">新規登録でレビュー！</Button>
+          <button className={styles.button}>新規登録でレビュー！</button>
         </Link>
       </div>
     </div>

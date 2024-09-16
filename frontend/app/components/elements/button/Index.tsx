@@ -3,7 +3,7 @@ import styles from './index.module.scss';
 
 interface ButtonProps {
   variant: string;
-  Children?: ReactNode;
+  children?: ReactNode;
   [key: string]: any;
 }
 

@@ -3,7 +3,7 @@ import { Zen_Maru_Gothic } from 'next/font/google';
 import './styles/globals.scss';
 import Header from './components/layouts/header/Index';
 import Footer from './components/layouts/footer/Index';
-import ScrollToTop from './components/elements/scrollToTop';
+import ArrowToTop from './components/elements/arrowToTop';
 
 const zenMaruGothic = Zen_Maru_Gothic({
   weight: ['400', '700'],
@@ -54,9 +54,9 @@ export default function RootLayout({
     <html lang="ja">
       <body className={`${zenMaruGothic.className} ${zenMaruGothic.variable}`}>
         <Header />
-        {children}
+        <main>{children}</main>
         <Footer />
-        <ScrollToTop />
+        <ArrowToTop />
       </body>
     </html>
   );

@@ -15,7 +15,7 @@ const Catchphrase = () => {
         </div>
       ))}
       <div className={styles.overlay}>
-        <h1 className={styles.Catchphrase}>
+        <h1 className={styles.catchphrase}>
           <span className={styles.text}>
             <p className={styles.word}>気</p>
             <p className={styles.word}>に</p>
@@ -32,7 +32,7 @@ const Catchphrase = () => {
           </span>
         </h1>
         <Link href="" className={styles.link}>
-          <Button variant="topImage">新規登録でレビュー！</Button>
+          <button className={styles.button}>新規登録でレビュー！</button>
         </Link>
       </div>
     </div>

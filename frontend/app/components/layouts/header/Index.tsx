@@ -1,6 +1,7 @@
 import styles from './index.module.scss';
 import Image from 'next/image';
 import Link from 'next/link';
+import petitMarche from '@/images/PetitMarche.svg';
 
 const Header = () => {
   return (
@@ -8,15 +9,7 @@ const Header = () => {
       <div className={styles.container}>
         <div className={styles.logoWrapper}>
           <Link href="/" className={styles.logoLink}>
-            <Image
-              src="/PetitMarche.svg"
-              alt="PetitMarche Logo"
-              className={styles.logo}
-              width={100}
-              height={100}
-              style={{ width: 'auto', height: '100%' }}
-              priority
-            />
+            <Image src={petitMarche} alt="当サイトのロゴ" className={styles.logo} width={100} height={100} priority />
           </Link>
         </div>
         <nav className={styles.nav}>

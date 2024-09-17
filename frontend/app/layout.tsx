@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Zen_Maru_Gothic } from 'next/font/google';
 import './styles/globals.scss';
-import Header from './components/layouts/header/Index';
-import Footer from './components/layouts/footer/Index';
 import ArrowToTop from './components/elements/arrowToTop';
+import Header from './components/layouts/header';
+import Footer from './components/layouts/footer';
 
 const zenMaruGothic = Zen_Maru_Gothic({
   weight: ['400', '700'],
@@ -17,8 +17,8 @@ export const metadata: Metadata = {
   title: 'Petit Marche',
   description: 'コンビニエンスストアの商品レビューサイト',
   icons: {
-    icon: '/convenience.png',
-    apple: '/convenience.png',
+    icon: '/frontend/app/icon.ico',
+    apple: '/frontend/app/icon.ico',
   },
   formatDetection: {
     telephone: false,
@@ -28,14 +28,14 @@ export const metadata: Metadata = {
     description: 'コンビニエンスストアの商品レビューサイト',
     url: 'https://google.com',
     siteName: 'Petit Marche',
-    images: '/frontend/public/convenience.png',
+    images: '/frontend/app/icon.ico',
     locale: 'ja_JP',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     description: 'コンビニエンスストアの商品レビューサイト',
-    images: '/frontend/public/convenience.png',
+    images: '/frontend/app/icon.ico',
   },
 };
 

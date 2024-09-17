@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './index.module.scss';
 import Image from 'next/image';
 import Link from 'next/link';
-import Button from '../../../../app/components/elements/button/Index';
+import Button from '../../../../app/components/elements/button';
 
 const images = ['/store0.jpg', '/store1.jpg', '/store2.jpg', '/store3.jpg'];
 

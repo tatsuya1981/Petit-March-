@@ -1,9 +1,9 @@
-@import '../../../styles/mixins.scss';
+@use '../../../styles/mixins.scss' as mx;
 
 .header {
   width: 100vw;
   height: 80px;
-  background-color: rgba(var(--color-bg-accent-darkBrown));
+  background-color: rgba(var(--color-bg-accent-dark-brown));
 }
 
 .container {
@@ -12,10 +12,10 @@
   display: flex;
   justify-content: space-between;
   padding: 0 3rem;
-  @include min('md') {
+  @include mx.min('md') {
     padding: 0 2rem;
   }
-  @include min('sm') {
+  @include mx.min('sm') {
     padding: 0 1rem;
   }
 }
@@ -29,10 +29,10 @@
   height: 100%;
   width: 100vw;
 
-  @include min('md') {
+  @include mx.min('md') {
     max-width: 150px;
   }
-  @include min('sm') {
+  @include mx.min('sm') {
     max-width: 110px;
   }
 }
@@ -50,7 +50,7 @@
     transform: scale(0.9, 0.9);
     transition: 1s all;
   }
-  @include min('md') {
+  @include mx.min('md') {
     max-height: 70%;
     padding: 0;
     &:hover {
@@ -58,7 +58,7 @@
       transition: 1s all;
     }
   }
-  @include min('sm') {
+  @include mx.min('sm') {
     max-height: 60%;
   }
 }
@@ -81,7 +81,7 @@
   object-fit: contain;
   height: auto;
   max-height: 20px;
-  @include min('sm') {
+  @include mx.min('sm') {
     font-size: 14px;
   }
 }

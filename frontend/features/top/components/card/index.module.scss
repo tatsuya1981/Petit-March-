@@ -1,4 +1,4 @@
-@import '../../../../app/styles/mixins.scss';
+@use '../../../../app/styles/mixins.scss' as mx;
 
 .container {
   display: flex;
@@ -11,14 +11,14 @@
   padding: 20px;
   margin: 0 auto;
   box-sizing: border-box;
-  @include min('lg') {
+  @include mx.min('lg') {
     max-width: 768px;
   }
-  @include min('md') {
+  @include mx.min('md') {
     flex-direction: column;
     max-width: 400px;
   }
-  @include min('sm') {
+  @include mx.min('sm') {
     max-width: 320px;
   }
 }
@@ -27,7 +27,7 @@
   flex: 0 0 auto;
   width: 40%;
   max-width: 400px;
-  @include min('md') {
+  @include mx.min('md') {
     width: 100%;
     max-width: 100%;
     margin-bottom: 20px;
@@ -48,7 +48,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  @include min('md') {
+  @include mx.min('md') {
     width: 100%;
     padding-left: 0;
   }

@@ -1,10 +1,10 @@
-@import '../../../styles/mixins.scss';
+@use '../../../styles/mixins.scss' as mx;
 
 .container {
   width: 100vw;
   height: auto;
   min-height: 180px;
-  background-color: rgba(var(--color-bg-accent-darkBrown));
+  background-color: rgba(var(--color-bg-accent-dark-brown));
 }
 
 .areaWrapper {
@@ -15,7 +15,7 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 1em;
-  @include min('sm') {
+  @include mx.min('sm') {
     margin-bottom: 0;
   }
 }
@@ -25,11 +25,11 @@
   max-width: 200px;
   height: auto;
   padding-top: 1em;
-  @include min('md') {
+  @include mx.min('md') {
     max-width: 80%;
     max-height: 80px;
   }
-  @include min('sm') {
+  @include mx.min('sm') {
     max-width: 60%;
     margin-bottom: 50px;
   }
@@ -38,7 +38,7 @@
 .link {
   align-self: flex-end;
 
-  @include min('sm') {
+  @include mx.min('sm') {
     align-self: flex-start;
   }
 }
@@ -49,7 +49,7 @@
     transition: 1s all;
   }
 
-  @include min('sm') {
+  @include mx.min('sm') {
     align-self: flex-start;
     margin-bottom: 20px;
   }
@@ -61,7 +61,7 @@
   justify-content: space-between;
   align-items: flex-end;
 
-  @include min('sm') {
+  @include mx.min('sm') {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -71,7 +71,7 @@
   display: flex;
   align-items: flex-end;
 
-  @include min('sm') {
+  @include mx.min('sm') {
     margin-bottom: 1em;
   }
 }
@@ -83,11 +83,11 @@
     opacity: 0.7;
   }
 
-  @include min('md') {
+  @include mx.min('md') {
     padding-right: 0.5em;
     font-size: clamp(10px, 0.8em, 11px);
   }
-  @include min('sm') {
+  @include mx.min('sm') {
     padding: 0;
     font-size: clamp(10px, 0.8em, 11px);
   }
@@ -96,10 +96,10 @@
 .copyRight {
   font-size: 12px;
 
-  @include min('md') {
+  @include mx.min('md') {
     font-size: clamp(10px, 0.8em, 11px);
   }
-  @include min('sm') {
+  @include mx.min('sm') {
     font-size: clamp(10px, 0.8em, 11px);
   }
 }

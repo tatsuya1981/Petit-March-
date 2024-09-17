@@ -2,8 +2,7 @@ import React from 'react';
 import styles from './index.module.scss';
 import Image from 'next/image';
 import Link from 'next/link';
-import Button from '../../../../app/components/elements/button/Index';
-import { ScrollComponentY } from '../../../../app/components/elements/scrollAnimation';
+import { ScrollComponentY } from '@/components/elements/scrollAnimation';
 
 const SubPhrase = () => {
   return (

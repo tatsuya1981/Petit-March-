@@ -1,4 +1,4 @@
-@import '../styles/mixins';
+@use '../styles/mixins' as mx;
 
 .main {
   display: flex;
@@ -7,7 +7,7 @@
   padding: 5rem 3rem 0 3rem;
   min-height: 100vh;
   background-color: rgba(var(--color-bg-primary));
-  @include min('sm') {
+  @include mx.min('sm') {
     padding: 3rem 2rem 0 2rem;
   }
 }
@@ -20,7 +20,7 @@
 
 .mainWordWrapper {
   margin-bottom: 100px;
-  @include min('sm') {
+  @include mx.min('sm') {
     margin-bottom: 30px;
   }
 }
@@ -32,7 +32,7 @@
   font-size: 32px;
   padding-bottom: 30px;
   text-decoration: underline;
-  @include min('sm') {
+  @include mx.min('sm') {
     font-size: 20px;
     padding-bottom: 20px;
   }
@@ -48,7 +48,7 @@
   text-align: center;
   padding-bottom: 1rem;
 
-  @include min('sm') {
+  @include mx.min('sm') {
     font-size: 14px;
   }
 }
@@ -65,7 +65,7 @@
   max-height: 280px;
   height: auto;
   object-fit: contain;
-  @include min('sm') {
+  @include mx.min('sm') {
     max-width: 300px;
   }
 }

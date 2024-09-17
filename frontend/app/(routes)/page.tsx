@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import styles from './page.module.scss';
 import ScrollComponent from '@/components/elements/scrollAnimation';
-import * as Top from '../../features/top/components/Index';
+import * as Top from '@/../features/top/components/Index';
 import PetitMarche from '@/images/PetitMarche.svg';
 
 export default function Home() {

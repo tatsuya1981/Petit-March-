@@ -1,4 +1,4 @@
-@import '../../../../app/styles/mixins.scss';
+@use '../../../../app/styles/mixins.scss' as mx;
 
 .container {
   width: 100vw;
@@ -83,10 +83,10 @@
   font-size: 40px;
   transform: translateY(2em);
   animation: text-animation 1s forwards;
-  @include min('md') {
+  @include mx.min('md') {
     font-size: 28px;
   }
-  @include min('sm') {
+  @include mx.min('sm') {
     font-size: 22px;
   }
 }
@@ -96,10 +96,10 @@
   font-size: 40px;
   transform: translateY(3em);
   animation: text-animation 1s forwards;
-  @include min('md') {
+  @include mx.min('md') {
     font-size: 28px;
   }
-  @include min('sm') {
+  @include mx.min('sm') {
     font-size: 22px;
   }
 }
@@ -147,7 +147,7 @@
 .button {
   font-family: var(--font-zen-maru-gothic);
   min-width: 330px;
-  background-color: rgba(var(--color-bg-accent-darkBrown));
+  background-color: rgba(var(--color-bg-accent-dark-brown));
   border-radius: 8px;
   padding: 10px 30px;
   font-size: 24px;
@@ -163,11 +163,11 @@
     background-color: rgba(var(--color-bg-accent-brown));
     color: white;
   }
-  @include min('md') {
+  @include mx.min('md') {
     min-width: 200px;
     font-size: 18px;
   }
-  @include min('sm') {
+  @include mx.min('sm') {
     min-width: 200px;
     font-size: 14px;
   }

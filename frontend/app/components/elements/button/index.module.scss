@@ -1,8 +1,6 @@
-@import '../../../styles/mixins';
-
 .base {
   font-family: var(--font-zen-maru-gothic);
-  background-color: rgba(var(--color-bg-accent-darkBrown));
+  background-color: rgba(var(--color-bg-accent-dark-brown));
   border-radius: 100px;
   font-size: 24px;
   color: rgba(var(--color-bg-primary));

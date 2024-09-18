@@ -12,6 +12,6 @@ RUN yarn build
 
 EXPOSE 4000
 
-USER node
+# USER node
 
 CMD [ "yarn", "dev" ]

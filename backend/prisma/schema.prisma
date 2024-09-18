@@ -13,125 +13,118 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Gender {
-  MALE = "男性",
-  FEMALE = "女性"
-}
-
 model User {
-  id Int @id @default(autoincrement())
-  name String @db.VarChar(255)
-  email String @unique @db.VarChar(255)
-  generation String? @db.VarChar(255)
-  gender Gender?
-  passwordDigest String @db.Text
-  isActive Boolean @default(true)
-  lastLoginAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  reviews Review[]
+  id             Int       @id @default(autoincrement())
+  name           String    @db.VarChar(255)
+  email          String    @unique @db.VarChar(255)
+  generation     String?   @db.VarChar(255)
+  gender         String?
+  passwordDigest String    @db.Text
+  isActive       Boolean   @default(true)
+  lastLoginAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  reviews        Review[]
+  Like           Like[]
 
   @@map("users")
 }
 
 model Review {
-  id Int @id @default(autoincrement())
-  userId Int
-  productId Int
-  brandId Int
-  storeId Int?
-  rating Int @db.SmallInt
-  title String @db.VarChar(255)
-  productName String @db.VarChar(255)
-  price Decimal? @db.Decimal(10, 2)
-  purchaseDate Date?
-  content String @db.Text(1000)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  productId    Int
+  brandId      Int
+  storeId      Int?
+  rating       Int       @db.SmallInt
+  title        String    @db.VarChar(255)
+  productName  String    @db.VarChar(255)
+  price        Decimal?  @db.Decimal(10, 2)
+  purchaseDate DateTime?
+  content      String    @db.VarChar(1000)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  user User @relation(fields: [userId], references:[id], onUpdate: Cascade, onDelete: Cascade)
-  product Product @relation(fields: [productId], references:[id])
-  brand Brand @relation(fields: [brandId], references:[id])
-  store Store @relation(fields: [storeId], references:[id])
+  user    User    @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+  brand   Brand   @relation(fields: [brandId], references: [id])
+  store   Store?  @relation(fields: [storeId], references: [id])
+  Image   Image[]
+  Like    Like[]
 
   @@index([userId])
   @@index([productId])
   @@index([brandId])
   @@index([storeId])
-
-  @@check(rating >= 1 && <= 5)
-
   @@map("reviews")
 }
 
 model Image {
-  id Int @id @default(autoincrement())
-  reviewId Int
-  order Int
-  imageUrl String
+  id        Int      @id @default(autoincrement())
+  reviewId  Int
+  order     Int
+  imageUrl  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  review Review @relation(fields: [reviewId], references:[id], onUpdate: Cascade, onDelete: Cascade)
+  review Review @relation(fields: [reviewId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   @@index([reviewId])
-
   @@map("images")
 }
 
 model Product {
-  id Int @id @default(autoincrement())
-  name String @db.VarChar(255)
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  reviews Review[]
+  reviews   Review[]
 
   @@map("products")
 }
 
 model Brand {
-  id Int @id @default(autoincrement())
-  name String @db.VarChar(255)
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  stores Store[]
-  reviews Review[]
+  stores    Store[]
+  reviews   Review[]
 
   @@map("brands")
 }
 
 model Store {
-  id Int @id @default(autoincrement())
-  brandId Int
-  name String @db.VarChar(255)
-  latitude Float
-  longitude Float
-  prefecture String
-  city String
+  id             Int      @id @default(autoincrement())
+  brandId        Int
+  name           String   @db.VarChar(255)
+  latitude       Float
+  longitude      Float
+  prefecture     String
+  city           String
   streetAddress1 String
   streetAddress2 String
-  zip String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  reviews Review[]
+  zip            String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  reviews        Review[]
 
-  brand Brand @relation(fields: [brandId], references:[id])
+  brand Brand @relation(fields: [brandId], references: [id])
 
   @@map("stores")
 }
 
 model Like {
-  id Int @id @default(autoincrement())
-  reviewId Int
-  userId Int
+  id        Int      @id @default(autoincrement())
+  reviewId  Int
+  userId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  review Review @relation(fields: [reviewId], references:[id], onUpdate: Cascade, onDelete: Cascade)
-  user User @relation(fields: [userId], references:[id])
+  review Review @relation(fields: [reviewId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id])
 
   @@index([reviewId])
   @@index([userId])
-
   @@map("likes")
 }

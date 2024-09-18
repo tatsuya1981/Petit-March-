@@ -14,4 +14,4 @@ EXPOSE 4000
 
 USER node
 
-CMD [ "yarn", "start" ]
+CMD [ "yarn", "dev" ]

@@ -1,0 +1,105 @@
+@use '../../../../app/styles/mixins.scss' as mx;
+
+.container {
+  width: 100vw;
+  height: 300px;
+  position: relative;
+  margin-bottom: 5vh;
+}
+
+.image {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  @include mx.min('md') {
+    max-width: 768px;
+  }
+  @include mx.min('sm') {
+    max-width: 450px;
+  }
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: white;
+  text-align: center;
+}
+
+.Catchphrase {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  padding-bottom: 70px;
+}
+
+.text {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+  letter-spacing: 0.06em;
+  font-size: clamp(38px, 3vw, 40px);
+  transform: translateY(3em);
+  animation: text-animation 2s forwards;
+  margin: 0 10px 70px 10px;
+  box-sizing: border-box;
+  @include mx.min('md') {
+    font-size: clamp(26px, 5vw, 38px);
+  }
+  @include mx.min('sm') {
+    font-size: clamp(21px, 3vw, 23px);
+  }
+}
+
+@keyframes text-animation {
+  0% {
+    transform: translateY(5em);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.button {
+  font-family: var(--font-zen-maru-gothic);
+  min-width: 330px;
+  background-color: rgba(var(--color-bg-accent-dark-brown));
+  border-radius: 8px;
+  padding: 10px 30px;
+  font-size: 24px;
+  color: rgba(var(--color-bg-primary));
+  font-weight: bold;
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+
+  &:hover {
+    background-color: rgba(var(--color-bg-accent-brown));
+    color: white;
+  }
+  @include mx.min('md') {
+    min-width: 200px;
+    font-size: 18px;
+  }
+  @include mx.min('sm') {
+    min-width: 200px;
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,174 @@
+@use '../../../../app/styles/mixins.scss' as mx;
+
+.container {
+  width: 100vw;
+  height: 500px;
+  position: relative;
+}
+
+.image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  animation: image-switch 28s infinite;
+}
+.src0 {
+  animation-delay: 0s;
+}
+.src1 {
+  animation-delay: 7s;
+}
+.src2 {
+  animation-delay: 14s;
+}
+.src3 {
+  animation-delay: 21s;
+}
+
+@keyframes image-switch {
+  0% {
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+  }
+  35% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: white;
+  text-align: center;
+}
+
+.catchphrase {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  padding-bottom: 70px;
+}
+
+.text {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+}
+
+.word {
+  letter-spacing: 0.06em;
+  font-size: 40px;
+  transform: translateY(2em);
+  animation: text-animation 1s forwards;
+  @include mx.min('md') {
+    font-size: 28px;
+  }
+  @include mx.min('sm') {
+    font-size: 22px;
+  }
+}
+
+.wordBlocks {
+  letter-spacing: 0.06em;
+  font-size: 40px;
+  transform: translateY(3em);
+  animation: text-animation 1s forwards;
+  @include mx.min('md') {
+    font-size: 28px;
+  }
+  @include mx.min('sm') {
+    font-size: 22px;
+  }
+}
+
+.word:nth-child(1) {
+  animation-delay: 0.2s;
+}
+.word:nth-child(2) {
+  animation-delay: 0.4s;
+}
+.word:nth-child(3) {
+  animation-delay: 0.6s;
+}
+.word:nth-child(4) {
+  animation-delay: 0.8s;
+}
+.word:nth-child(5) {
+  animation-delay: 1s;
+}
+.word:nth-child(6) {
+  animation-delay: 1.2s;
+}
+.word:nth-child(7) {
+  animation-delay: 1.4s;
+}
+.word:nth-child(8) {
+  animation-delay: 1.6s;
+}
+.word:nth-child(9) {
+  animation-delay: 1.8s;
+}
+.wordBlocks:nth-child(1) {
+  animation-delay: 3s;
+}
+
+@keyframes text-animation {
+  0% {
+    transform: translateY(2em);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.button {
+  font-family: var(--font-zen-maru-gothic);
+  min-width: 330px;
+  background-color: rgba(var(--color-bg-accent-dark-brown));
+  border-radius: 8px;
+  padding: 10px 30px;
+  font-size: 24px;
+  color: rgba(var(--color-bg-primary));
+  font-weight: bold;
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+
+  &:hover {
+    background-color: rgba(var(--color-bg-accent-brown));
+    color: white;
+  }
+  @include mx.min('md') {
+    min-width: 200px;
+    font-size: 18px;
+  }
+  @include mx.min('sm') {
+    min-width: 200px;
+    font-size: 14px;
+  }
+}

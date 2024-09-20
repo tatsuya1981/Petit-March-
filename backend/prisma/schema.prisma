@@ -1,0 +1,130 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  name           String    @db.VarChar(255)
+  email          String    @unique @db.VarChar(255)
+  generation     Int?      @db.SmallInt
+  gender         String?
+  passwordDigest String    @db.Text
+  isActive       Boolean   @default(true)
+  lastLoginAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  reviews        Review[]
+  Like           Like[]
+
+  @@map("users")
+}
+
+model Review {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  productId    Int
+  brandId      Int
+  storeId      Int?
+  rating       Int       @db.SmallInt
+  title        String    @db.VarChar(255)
+  productName  String    @db.VarChar(255)
+  price        Decimal?  @db.Decimal(10, 2)
+  purchaseDate DateTime?
+  content      String    @db.VarChar(1000)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+  brand   Brand   @relation(fields: [brandId], references: [id])
+  store   Store?  @relation(fields: [storeId], references: [id])
+  Image   Image[]
+  Like    Like[]
+
+  @@index([userId])
+  @@index([productId])
+  @@index([brandId])
+  @@index([storeId])
+  @@map("reviews")
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  reviewId  Int
+  order     Int
+  imageUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  review Review @relation(fields: [reviewId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@index([reviewId])
+  @@map("images")
+}
+
+model Product {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviews   Review[]
+
+  @@map("products")
+}
+
+model Brand {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  stores    Store[]
+  reviews   Review[]
+
+  @@map("brands")
+}
+
+model Store {
+  id             Int      @id @default(autoincrement())
+  brandId        Int
+  name           String   @db.VarChar(255)
+  latitude       Float
+  longitude      Float
+  prefecture     String
+  city           String
+  streetAddress1 String
+  streetAddress2 String
+  zip            String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  reviews        Review[]
+
+  brand Brand @relation(fields: [brandId], references: [id])
+
+  @@map("stores")
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  reviewId  Int
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  review Review @relation(fields: [reviewId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([reviewId])
+  @@index([userId])
+  @@map("likes")
+}

@@ -13,33 +13,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum GenerationCode {
-  EARLY_TEENS
-  LATE_TEENS
-  EARLY_TWENTIES
-  LATE_TWENTIES
-  EARLY_THIRTIES
-  LATE_THIRTIES
-  EARLY_FORTIES
-  LATE_FORTIES
-  EARLY_FIFTIES
-  LATE_FIFTIES
-  EARLY_SIXTIES
-  LATE_SIXTIES
-  ELDERLY
-}
-
 model User {
-  id             Int            @id @default(autoincrement())
-  name           String         @db.VarChar(255)
-  email          String         @unique @db.VarChar(255)
-  generation     GenerationCode
+  id             Int       @id @default(autoincrement())
+  name           String    @db.VarChar(255)
+  email          String    @unique @db.VarChar(255)
+  generation     Int?      @db.Integer
   gender         String?
-  passwordDigest String         @db.Text
-  isActive       Boolean        @default(true)
+  passwordDigest String    @db.Text
+  isActive       Boolean   @default(true)
   lastLoginAt    DateTime?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
   reviews        Review[]
   Like           Like[]
 

@@ -1,9 +1,8 @@
-const express = require("express")
-const router = express.Router
+import express from "express";
+import { createReview } from "../controllers/reviewController";
 
-router.post("/reviews", async(req, res) => {
-  const
-  try{
+const router = express.Router();
 
-  }
-});
+router.post("/", createReview);
+
+export default router;

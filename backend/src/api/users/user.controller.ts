@@ -1,11 +1,13 @@
-import userService from "./user.service";
+// HTTPレスポンスとリクエストの処理を記述
+
+import userModel from "./user.model";
 import { Request, Response } from "express";
 
 export const getUserById = async (req: Request, res: Response) => {
   const userId = parseInt(req.params.id, 10);
 
   try {
-    const user = await userService.getUserId(userId);
+    const user = await userModel.getUserByModel(userId);
     if (user) {
       res.json(user);
     } else {

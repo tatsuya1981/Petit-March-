@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import reviewService from "../services/reviewService";
+import reviewService from "./review.service";
 
 export const createReview = async (req: Request, res: Response) => {
   const reviewData = req.body;

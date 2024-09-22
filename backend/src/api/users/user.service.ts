@@ -1,7 +1,7 @@
-import prisma from "../models/prismaClient";
+import prisma from "../../models/prismaClient";
 
 const convertGeneration = (generation: number | null): string => {
-  if (generation === null) return "不明";
+  if (generation === null) return "秘密";
 
   switch (generation) {
     case 10:
@@ -36,7 +36,7 @@ const convertGeneration = (generation: number | null): string => {
 };
 
 const getUserId = async (userId: number) => {
-  const user = await prisma.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
   });
   if (user) {

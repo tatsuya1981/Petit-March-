@@ -1,4 +1,4 @@
-import userService from "../services/userService";
+import userService from "./user.service";
 import { Request, Response } from "express";
 
 export const getUserById = async (req: Request, res: Response) => {
@@ -15,3 +15,5 @@ export const getUserById = async (req: Request, res: Response) => {
     res.status(500).json({ error: "サーバーエラーです" });
   }
 };
+
+export default getUserById;

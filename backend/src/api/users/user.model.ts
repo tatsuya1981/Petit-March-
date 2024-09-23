@@ -20,7 +20,7 @@ const getUserByModel = async (userId: number): Promise<User | null> => {
   return null;
 };
 
-const convertGeneration = (generation: number | null): string => {
+export const convertGeneration = (generation: number | null): string => {
   if (generation === null) return "秘密";
 
   switch (generation) {

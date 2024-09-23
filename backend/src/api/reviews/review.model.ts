@@ -1,17 +1,21 @@
 // データベースの操作と記述とデータ構造の定義を記述
 // データベースクエリの操作やテーブルの構造を反映したインターフェースの定義など
 
-import { Review as PrismaReview } from "@prisma/client";
+import { PrismaClient, Review, Prisma } from "@prisma/client";
 import prisma from "../config/database";
 
-export type Review = PrismaReview;
+export type { Review };
 
 // レビューの生成
-const createReview = async (data: Review): Promise<Review> => {
+const createReview = async (
+  data: Prisma.ReviewCreateInput
+): Promise<Review> => {
   return await prisma.review.create({
     data: {
       ...data,
-      price: data.price ? parseFloat(data.price.toFixed(2)) : null,
+      price: data.price ? new Prisma.Decimal(data.price.toString()) : null,
+      // ISO-8601形式の日時をDateオブジェクトへ変換
+      purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : null,
     },
   });
 };

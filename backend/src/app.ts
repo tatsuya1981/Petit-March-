@@ -8,6 +8,7 @@ app.get("/", (req, res) => {
   res.json({ message: "ok" });
 });
 
+app.use(express.json());
 app.use("/api", apiRouters);
 
 app.listen(port, () => {

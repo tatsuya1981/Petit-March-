@@ -12,8 +12,10 @@ RUN npx prisma generate
 
 RUN yarn build
 
+COPY start.sh .
+RUN chmod +x start.sh
+
 EXPOSE 4000
 
 # USER node
-
-CMD [ "yarn", "dev" ]
+CMD [ "sh", "./start.sh" ]

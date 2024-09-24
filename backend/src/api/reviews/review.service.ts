@@ -3,10 +3,10 @@
 
 // バリデーション作成
 import { Review } from "./review.model";
-export class ValidationError extends Error {
+export class ReviewValidationError extends Error {
   constructor(public errors: string[]) {
     super("Validation failed");
-    this.name = "ValidationError";
+    this.name = "ReviewValidationError";
   }
 }
 
@@ -28,7 +28,7 @@ const ValidateReviewData = (data: Review): string[] => {
 const ValidateReview = async (data: Review) => {
   const errors = ValidateReviewData(data);
   if (errors.length > 0) {
-    throw new ValidationError(errors);
+    throw new ReviewValidationError(errors);
   }
 };
 

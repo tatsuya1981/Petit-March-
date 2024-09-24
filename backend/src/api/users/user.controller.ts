@@ -1,13 +1,33 @@
 // HTTPレスポンスとリクエストの処理を記述
 
-import userModel from "./user.model";
 import { Request, Response } from "express";
+import userService from "./user.service";
+
+export const createUser = async (req: Request, res: Response) => {
+  const { name, email, generation, gender, passwordDigest } = req.body;
+  try {
+    const newUser = await userService.createUser({
+      name,
+      email,
+      generation,
+      gender,
+      passwordDigest,
+    });
+    res.status(201).json(newUser);
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "予期せぬエラーが発生しました" });
+    }
+  }
+};
 
 export const getUserById = async (req: Request, res: Response) => {
   const userId = parseInt(req.params.id, 10);
 
   try {
-    const user = await userModel.getUserByModel(userId);
+    const user = await userService.getUserById(userId);
     if (user) {
       res.json(user);
     } else {
@@ -18,4 +38,4 @@ export const getUserById = async (req: Request, res: Response) => {
   }
 };
 
-export default getUserById;
+export default { createUser, getUserById };

@@ -1,7 +1,7 @@
-// データベースの操作と記述とデータ構造の定義を記述
+// データベースの操作、記述とデータ構造の定義を記述
 // データベースクエリの操作やテーブルの構造を反映したインターフェースの定義など
 
-import { PrismaClient, Review, Prisma } from "@prisma/client";
+import { Review, Prisma } from "@prisma/client";
 import prisma from "../config/database";
 
 export type { Review };

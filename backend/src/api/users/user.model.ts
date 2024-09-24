@@ -1,23 +1,17 @@
-// データベースの操作と記述とデータ構造の定義を記述
+// データベースの操作、記述とデータ構造の定義を記述
 // データベースクエリの操作やテーブルの構造を反映したインターフェースの定義など
 
 import { User as PrismaUser } from "@prisma/client";
-import prisma from "../config/database";
 
-// generation型を除外して新たに作り直す
-type User = Omit<PrismaUser, "generation"> & { generation: string };
+// レスポンスとして受け取るためgeneration型を除外して新たに文字列型として作り直す
+export type User = Omit<PrismaUser, "generation"> & { generation: string };
 
-const getUserByModel = async (userId: number): Promise<User | null> => {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-  });
-  if (user) {
-    return {
-      ...user,
-      generation: convertGeneration(user.generation),
-    };
-  }
-  return null;
+export type CreateUserData = {
+  name: string;
+  email: string;
+  passwordDigest: string;
+  generation?: number;
+  gender?: string;
 };
 
 export const convertGeneration = (generation: number | null): string => {
@@ -54,5 +48,3 @@ export const convertGeneration = (generation: number | null): string => {
       return "";
   }
 };
-
-export default { getUserByModel };

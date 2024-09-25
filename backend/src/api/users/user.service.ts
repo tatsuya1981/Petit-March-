@@ -5,9 +5,18 @@ import { User as PrismaUser } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import prisma from "../config/database";
 import { convertGeneration } from "./user.model";
+import validator from "validator";
+import { formatToJapanTime } from "../../utils/dateUtils";
 
-// レスポンスとして受け取るためgeneration型を除外して新たに文字列型として作り直す
-type User = Omit<PrismaUser, "generation"> & { generation: string };
+// レスポンスとして受け取るためgeneration型を新たに文字列型として作り直す
+type UserResponse = Omit<
+  PrismaUser,
+  "passwordDigest" | "isActive" | "lastLoginAt" | "generation"
+> & {
+  generation: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 type CreateUserData = {
   name: string;
@@ -17,6 +26,7 @@ type CreateUserData = {
   gender?: string;
 };
 
+// バリデーション時のエラーを作成
 export class UserValidationError extends Error {
   constructor(public errors: string[]) {
     super("Validation failed");
@@ -32,15 +42,20 @@ export class UserService {
     if (!data.name || data.name.trim().length === 0)
       errors.push("名前は必須です");
     if (data.name.trim().length > 50) errors.push("ユーザー名は５０字以内です");
-    if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))
+    if (!data.email) {
+      errors.push("メールアドレスは必須です");
+    } else if (!validator.isEmail(data.email)) {
       errors.push("有効なメールアドレスを入力してください");
-    if (!data.passwordDigest) errors.push("パスワードは必須です");
-    else if (data.passwordDigest.length < 8)
+    }
+    if (!data.passwordDigest) {
+      errors.push("パスワードは必須です");
+    } else if (data.passwordDigest.length < 8) {
       errors.push("パスワードは８文字以上でなくてはなりません");
+    }
     if (data.generation && (data.generation < 10 || data.generation > 70))
       errors.push("不正な世代です");
     if (data.gender && !["男性", "女性", "秘密"].includes(data.gender))
-      errors.push("不明な性別です");
+      errors.push("性別が正しく登録されていません");
 
     return errors;
   }
@@ -52,15 +67,31 @@ export class UserService {
     }
   }
 
+  // ユーザーレスポンスを必要なものだけ表示するようにカスタマイズ
+  private formatUserResponse(user: PrismaUser): UserResponse {
+    const {
+      passwordDigest,
+      isActive,
+      lastLoginAt,
+      ...userWithoutSensitiveInfo
+    } = user;
+    return {
+      ...userWithoutSensitiveInfo,
+      generation: convertGeneration(user.generation),
+      createdAt: formatToJapanTime(user.createdAt),
+      updatedAt: formatToJapanTime(user.updatedAt),
+    } as UserResponse;
+  }
+
   // ユーザー作成
-  async createUser(input: CreateUserData): Promise<User> {
+  async createUser(input: CreateUserData): Promise<UserResponse> {
     const { name, email, generation, passwordDigest } = input;
     const gender =
       input.gender === "" || input.gender === undefined ? "秘密" : input.gender;
 
     // メールのユニーク判定
     const uniqueEmail = await prisma.user.findUnique({
-      where: { email: input.email },
+      where: { email },
     });
     if (uniqueEmail) {
       throw new Error("このメールアドレスはすでに使用されています");
@@ -69,6 +100,7 @@ export class UserService {
     // パスワードハッシュ化＋ソルト
     const hashedPassword = await bcrypt.hash(passwordDigest, 10);
 
+    // ユーザーデータをデータベースへ登録
     const user = await prisma.user.create({
       data: {
         name,
@@ -78,22 +110,16 @@ export class UserService {
         gender,
       },
     });
-    return {
-      ...user,
-      generation: convertGeneration(user.generation),
-    };
+    return this.formatUserResponse(user);
   }
 
   // ユーザー検索
-  async getUserById(userId: number): Promise<User | null> {
+  async getUserById(userId: number): Promise<UserResponse | null> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
     if (user) {
-      return {
-        ...user,
-        generation: convertGeneration(user.generation),
-      };
+      return this.formatUserResponse(user);
     }
     return null;
   }

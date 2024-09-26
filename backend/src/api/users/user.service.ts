@@ -8,6 +8,9 @@ import { convertGeneration } from "./user.model";
 import validator from "validator";
 import { formatToJapanTime } from "../../utils/dateUtils";
 
+// 環境変数のペッパー呼び出し
+const pepper = process.env.MY_PEPPER;
+
 // レスポンスとして受け取るためgeneration型を新たに文字列型として作り直す
 type UserResponse = Omit<
   PrismaUser,
@@ -86,19 +89,28 @@ export class UserService {
   // ユーザー作成
   async createUser(input: CreateUserData): Promise<UserResponse> {
     const { name, email, generation, passwordDigest } = input;
+
+    // 性別が空欄の場合の処理
     const gender =
       input.gender === "" || input.gender === undefined ? "秘密" : input.gender;
 
-    // メールのユニーク判定
-    const uniqueEmail = await prisma.user.findUnique({
-      where: { email },
+    // ユーザーデータのユニーク判定
+    const Uniqueness = await prisma.user.findFirst({
+      where: {
+        OR: [{ name }, { email }],
+      },
     });
-    if (uniqueEmail) {
-      throw new Error("このメールアドレスはすでに使用されています");
+    if (Uniqueness) {
+      if (Uniqueness.email === email) {
+        throw new Error("このメールアドレスは既に使用されています");
+      } else {
+        throw new Error("このユーザー名は既に使用されています");
+      }
     }
 
-    // パスワードハッシュ化＋ソルト
-    const hashedPassword = await bcrypt.hash(passwordDigest, 10);
+    // パスワードハッシュ化＋ソルト＋ペッパー
+    const pepperPassword = passwordDigest + pepper;
+    const hashedPassword = await bcrypt.hash(pepperPassword, 10);
 
     // ユーザーデータをデータベースへ登録
     const user = await prisma.user.create({

@@ -24,6 +24,7 @@
   "scripts": {
     "start": "node dist/app.js",
     "dev": "nodemon src/app.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "seed": "ts-node -P tsconfig.json prisma/seed.ts"
   }
 }

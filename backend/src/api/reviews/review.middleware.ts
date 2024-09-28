@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import reviewService from "./review.service";
-import { ReviewValidationError } from "./review.service";
+import reviewModel, { ReviewValidationError } from "./review.model";
 
 // バリデーションの検証
 export const validateReviewMiddleware = async (
@@ -9,7 +8,7 @@ export const validateReviewMiddleware = async (
   next: NextFunction
 ) => {
   try {
-    await reviewService.ValidateReview(req.body);
+    await reviewModel.ValidateReview(req.body);
     next();
   } catch (error) {
     if (error instanceof ReviewValidationError) {

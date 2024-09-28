@@ -1,4 +1,4 @@
-import prisma from "../src/api/config/database";
+import prisma from "../src/config/database";
 
 const main = async () => {
   // シードデータの初期化
@@ -23,7 +23,6 @@ const main = async () => {
       data: { name },
     });
   }
-  console.log("シードが正常に実行されました");
 };
 
 // シードの実行

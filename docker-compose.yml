@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   backend:
     build: ./backend
@@ -8,6 +6,7 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+      - prisma_generated:/app/node_modules/.prisma
     environment:
       - NODE_ENV=development
       - DATABASE_URL=${DATABASE_URL}
@@ -15,6 +14,7 @@ services:
       - db
     networks:
       - app-network
+    command: sh ./start.sh
 
   db:
     image: postgres:16
@@ -35,3 +35,4 @@ networks:
 
 volumes:
   postgres_data:
+  prisma_generated:

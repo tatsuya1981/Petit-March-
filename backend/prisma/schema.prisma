@@ -17,7 +17,7 @@ model User {
   id             Int       @id @default(autoincrement())
   name           String    @db.VarChar(255)
   email          String    @unique @db.VarChar(255)
-  generation     Int?      @db.SmallInt
+  generation     Int?      @db.Integer
   gender         String?
   passwordDigest String    @db.Text
   isActive       Boolean   @default(true)
@@ -85,7 +85,7 @@ model Product {
 
 model Brand {
   id        Int      @id @default(autoincrement())
-  name      String   @db.VarChar(255)
+  name      String   @unique @db.VarChar(255)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   stores    Store[]
@@ -111,6 +111,7 @@ model Store {
 
   brand Brand @relation(fields: [brandId], references: [id])
 
+  @@index([brandId])
   @@map("stores")
 }
 

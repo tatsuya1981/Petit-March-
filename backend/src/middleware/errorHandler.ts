@@ -34,10 +34,3 @@ export const errorHandler = (
     message: "サーバー内でエラーが発生しました",
   });
 };
-
-// 非同期関数のエラーをキャッチ
-export const catchAsync = (fn: Function) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    fn(req, res, next).catch(next);
-  };
-};

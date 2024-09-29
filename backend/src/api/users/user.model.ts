@@ -35,10 +35,8 @@ export const convertGeneration = (generation: number | null): string => {
       return "６０代前半";
     case 70:
       return "６０代後半";
-    case 75:
-      return "７０歳以上";
     default:
-      return "";
+      return "７０歳以上";
   }
 };
 
@@ -97,7 +95,7 @@ export class UserModel {
     } else if (data.passwordDigest.length < 8) {
       errors.push("パスワードは８文字以上でなくてはなりません");
     }
-    if (data.generation && (data.generation < 15 || data.generation > 75))
+    if (data.generation && (data.generation < 15 || data.generation > 70))
       errors.push("不正な世代です");
     if (data.gender && !["male", "female"].includes(data.gender))
       errors.push("性別が正しく登録されていません");

@@ -3,7 +3,7 @@
 import { Request, Response } from "express";
 import reviewModel from "./review.model";
 
-export const createReview = async (req: Request, res: Response) => {
+export const create = async (req: Request, res: Response) => {
   const reviewData = req.body;
   const newReview = await reviewModel.createReview(reviewData);
   res.status(201).json(newReview);

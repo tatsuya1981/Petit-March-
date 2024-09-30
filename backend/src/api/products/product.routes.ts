@@ -1,14 +1,11 @@
 // APIエンドポイントの定義とルーティングを記述
 
 import express from "express";
-import {
-  createProductCategories,
-  getProductCategories,
-} from "./product.controller";
+import { create, get } from "./product.controller";
 
 const router = express.Router();
 
-router.get("/", getProductCategories);
-router.post("/", createProductCategories);
+router.get("/", get);
+router.post("/", create);
 
 export default router;

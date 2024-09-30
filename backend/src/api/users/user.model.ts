@@ -79,7 +79,7 @@ export class UserValidationError extends Error {
 
 export class UserModel {
   //バリデーションの設定
-  validateUserData(data: CreateUserData): string[] {
+  validateData(data: CreateUserData): string[] {
     const errors: string[] = [];
 
     if (!data.name || data.name.trim().length === 0)
@@ -104,7 +104,7 @@ export class UserModel {
   }
 
   async validateUser(data: CreateUserData): Promise<void> {
-    const errors = this.validateUserData(data);
+    const errors = this.validateData(data);
     if (errors.length > 0) {
       throw new UserValidationError(errors);
     }

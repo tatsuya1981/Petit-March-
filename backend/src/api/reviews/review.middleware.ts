@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import reviewModel, { ReviewValidationError } from "./review.model";
 
 // バリデーションの検証
-export const validateReviewMiddleware = async (
+export const validate = async (
   req: Request,
   res: Response,
   next: NextFunction

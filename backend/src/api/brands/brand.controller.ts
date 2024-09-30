@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import prisma from "../../config/database";
 
 // コンビニブランドカテゴリー取得
-export const getBrandCategories = async (req: Request, res: Response) => {
+export const get = async (req: Request, res: Response) => {
   const categories = await prisma.brand.findMany({
     orderBy: {
       // 昇順に並べる
@@ -15,7 +15,7 @@ export const getBrandCategories = async (req: Request, res: Response) => {
 };
 
 // コンビニブランドカテゴリー作成
-export const createBrandCategories = async (req: Request, res: Response) => {
+export const create = async (req: Request, res: Response) => {
   const { name, brandId } = req.body;
   const category = await prisma.brand.create({
     data: { name, brandId },

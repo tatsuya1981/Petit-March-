@@ -15,7 +15,7 @@ export class ReviewValidationError extends Error {
 }
 
 export class ReviewModel {
-  ValidateReviewData = (data: Review): string[] => {
+  ValidateData = (data: Review): string[] => {
     const errors: string[] = [];
 
     if (!data.userId) errors.push("ユーザーIDは必須です");
@@ -31,7 +31,7 @@ export class ReviewModel {
   };
 
   ValidateReview = async (data: Review) => {
-    const errors = this.ValidateReviewData(data);
+    const errors = this.ValidateData(data);
     if (errors.length > 0) {
       throw new ReviewValidationError(errors);
     }

@@ -1,11 +1,11 @@
 // APIエンドポイントの定義とルーティングを記述
 
 import express from "express";
-import { createReview } from "./review.controller";
-import { validateReviewMiddleware } from "./review.middleware";
+import { create } from "./review.controller";
+import { validate } from "./review.middleware";
 
 const router = express.Router();
 
-router.post("/", validateReviewMiddleware, createReview);
+router.post("/", validate, create);
 
 export default router;

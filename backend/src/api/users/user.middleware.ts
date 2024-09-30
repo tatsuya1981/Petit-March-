@@ -2,7 +2,7 @@ import userModel, { UserValidationError } from "./user.model";
 import { NextFunction, Request, Response } from "express";
 
 // バリデーションの検証
-export const validateUserMiddleware = async (
+export const validate = async (
   req: Request,
   res: Response,
   next: NextFunction

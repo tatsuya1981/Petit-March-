@@ -41,7 +41,7 @@ model Review {
   productName  String    @db.VarChar(255)
   price        Decimal?  @db.Decimal(10, 2)
   purchaseDate DateTime?
-  content      String    @db.VarChar(1000)
+  content      String    @db.VarChar(2000)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
@@ -105,7 +105,7 @@ model Store {
   prefecture     String
   city           String
   streetAddress1 String
-  streetAddress2 String
+  streetAddress2 String?
   zip            String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

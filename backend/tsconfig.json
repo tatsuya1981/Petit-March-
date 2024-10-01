@@ -5,6 +5,7 @@
     "outDir": "./dist",
     "rootDir": ".",
     "strict": true,
+    "strictNullChecks": true,
     "esModuleInterop": true,
     "lib": ["esnext"],
     "baseUrl": ".",

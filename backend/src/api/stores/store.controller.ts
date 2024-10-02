@@ -1,14 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError } from "../../middleware/errorHandler";
 import storeModel, { StoreInput, storeSchema } from "./store.model";
-import { Prisma, Store } from "@prisma/client";
+import { Store } from "@prisma/client";
+import { isPrismaError } from "../../utils/isPrismaError";
 
-const isPrismaError = (
-  error: unknown
-): error is Prisma.PrismaClientKnownRequestError => {
-  return error instanceof Prisma.PrismaClientKnownRequestError;
-};
-
+// ストア情報獲得
 export const get = async (req: Request, res: Response, next: NextFunction) => {
   const storeId = parseInt(req.params.id);
   if (isNaN(storeId)) {
@@ -26,6 +22,7 @@ export const get = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+// ストア情報作成
 export const create = async (
   req: Request,
   res: Response,
@@ -44,6 +41,7 @@ export const create = async (
   }
 };
 
+// ストア情報更新
 export const update = async (
   req: Request,
   res: Response,
@@ -71,6 +69,7 @@ export const update = async (
   }
 };
 
+// ストア情報削除
 export const remove = async (
   req: Request,
   res: Response,

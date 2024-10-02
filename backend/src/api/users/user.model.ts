@@ -1,11 +1,10 @@
 // データベースの操作、記述とデータ構造の定義を記述
 // データベースクエリの操作やテーブルの構造を反映したインターフェースの定義など
 
-import { User as PrismaUser } from "@prisma/client";
 import prisma from "../../config/database";
-import validator from "validator";
 import { hashPassword } from "../../utils/authUtils";
 import { formatToJapanTime } from "../../utils/dateUtils";
+import { z } from "zod";
 
 export const convertGeneration = (generation: number | null): string => {
   if (generation === null) return "秘密";
@@ -51,67 +50,35 @@ export const convertGender = (gender: string | null): string => {
   }
 };
 
-type CreateUserData = {
-  name: string;
-  email: string;
-  passwordDigest: string;
-  generation?: number;
-  gender?: string;
-};
+// zodライブラリを使用してプロパティの型や制約を定義
+export const userSchema = z.object({
+  name: z
+    .string()
+    .min(1, "名前は必須です")
+    .max(50, "ユーザー名は５０字以内です"),
+  email: z.string().email("有効なメールアドレスを入力してください"),
+  passwordDigest: z
+    .string()
+    .min(8, "パスワードは８文字以上でなくてはなりません"),
+  generation: z.number().int().min(15).max(70).nullable(),
+  gender: z.enum(["mail", "female"]).nullable(),
+});
+
+// zodスキーマからTypeScriptの型を生成
+export type UserInput = z.infer<typeof userSchema>;
 
 // レスポンスのgeneration型を新たに文字列型として作り直す
 export type UserResponse = Omit<
-  PrismaUser,
+  UserInput,
   "passwordDigest" | "isActive" | "lastLoginAt" | "generation"
 > & {
   generation: string;
   createdAt: string;
   updatedAt: string;
 };
-
-// バリデーション時のエラーを作成
-export class UserValidationError extends Error {
-  constructor(public errors: string[]) {
-    super("Validation failed");
-    this.name = "UserValidationError";
-  }
-}
-
 export class UserModel {
-  //バリデーションの設定
-  validateData(data: CreateUserData): string[] {
-    const errors: string[] = [];
-
-    if (!data.name || data.name.trim().length === 0)
-      errors.push("名前は必須です");
-    if (data.name.trim().length > 50) errors.push("ユーザー名は５０字以内です");
-    if (!data.email) {
-      errors.push("メールアドレスは必須です");
-    } else if (!validator.isEmail(data.email)) {
-      errors.push("有効なメールアドレスを入力してください");
-    }
-    if (!data.passwordDigest) {
-      errors.push("パスワードは必須です");
-    } else if (data.passwordDigest.length < 8) {
-      errors.push("パスワードは８文字以上でなくてはなりません");
-    }
-    if (data.generation && (data.generation < 15 || data.generation > 70))
-      errors.push("不正な世代です");
-    if (data.gender && !["male", "female"].includes(data.gender))
-      errors.push("性別が正しく登録されていません");
-
-    return errors;
-  }
-
-  async validateUser(data: CreateUserData): Promise<void> {
-    const errors = this.validateData(data);
-    if (errors.length > 0) {
-      throw new UserValidationError(errors);
-    }
-  }
-
   // ユーザーレスポンスを必要なものだけ表示するようにカスタマイズ
-  formatUserResponse(user: PrismaUser): UserResponse {
+  formatUserResponse(user: any) {
     const {
       passwordDigest,
       isActive,
@@ -127,21 +94,20 @@ export class UserModel {
     } as UserResponse;
   }
 
-  // ユーザー作成
-  async createUser(input: CreateUserData): Promise<UserResponse> {
-    const { name, email, generation, passwordDigest, gender } = input;
-
-    // ユーザーデータのユニーク判定
-    const uniqueness = await prisma.user.findFirst({
+  // ユーザーデータのユニーク判定
+  uniqueness = async (email: string, name?: string): Promise<boolean> => {
+    const search = await prisma.user.findFirst({
       where: {
         OR: [{ name }, { email }],
       },
     });
-    if (uniqueness) {
-      if (uniqueness.email === email) {
-        throw new Error("名前・メールアドレスはすでに使用されています");
-      }
-    }
+    // searchが見つけられない（ユニーク）ならtrue、そうでなければfalseを返す
+    return !search;
+  };
+
+  // ユーザー作成
+  createUser = async (userData: UserInput): Promise<UserResponse> => {
+    const { name, email, generation, passwordDigest, gender } = userData;
     // パスワードのハッシュ化
     const hashedPassword = await hashPassword(passwordDigest);
 
@@ -156,18 +122,45 @@ export class UserModel {
       },
     });
     return this.formatUserResponse(user);
-  }
+  };
 
   // ユーザー検索
-  async getUserById(userId: number): Promise<UserResponse | null> {
+  getUserById = async (id: number): Promise<UserResponse | undefined> => {
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id },
     });
     if (user) {
       return this.formatUserResponse(user);
     }
-    return null;
-  }
+    return undefined;
+  };
+
+  // ユーザー更新
+  updateUser = async (
+    id: number,
+    userData: UserInput
+  ): Promise<UserResponse> => {
+    const { name, email, generation, passwordDigest, gender } = userData;
+    const hashedPassword = await hashPassword(passwordDigest);
+    const user = await prisma.user.update({
+      where: { id },
+      data: {
+        name,
+        email,
+        generation,
+        passwordDigest: hashedPassword,
+        gender,
+      },
+    });
+    return this.formatUserResponse(user);
+  };
+
+  // ユーザー削除
+  deleteUser = async (id: number) => {
+    return prisma.user.delete({
+      where: { id },
+    });
+  };
 }
 
 export default new UserModel();

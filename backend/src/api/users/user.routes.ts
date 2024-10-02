@@ -1,12 +1,13 @@
 // APIエンドポイントの定義とルーティングを記述
 
 import express from "express";
-import { create, get } from "./user.controller";
-import { validate } from "./user.middleware";
+import { create, get, remove, update } from "./user.controller";
 
 const router = express.Router();
 
 router.get("/:id", get);
-router.post("/", validate, create);
+router.post("/", create);
+router.put("/:id", update);
+router.delete("/:id", remove);
 
 export default router;

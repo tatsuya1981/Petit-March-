@@ -49,7 +49,7 @@ model Review {
   product Product @relation(fields: [productId], references: [productId])
   brand   Brand   @relation(fields: [brandId], references: [brandId])
   store   Store?  @relation(fields: [storeId], references: [id])
-  Image   Image[]
+  image   Image[]
   Like    Like[]
 
   @@index([userId])
@@ -125,7 +125,7 @@ model Like {
   updatedAt DateTime @updatedAt
 
   review Review @relation(fields: [reviewId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   @@index([reviewId])
   @@index([userId])

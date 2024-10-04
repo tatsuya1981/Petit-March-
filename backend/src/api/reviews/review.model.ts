@@ -20,9 +20,10 @@ export const reviewSchema = z.object({
   content: z.string().min(1).max(2000),
 });
 
+// zodスキーマからTypeScriptの型を生成
 export type ReviewInput = z.infer<typeof reviewSchema>;
 
-// 文字列で返される formatToJapanTime の為に型整合性を合わせる型定義
+// formatToJapanTime が文字列で返される為、型整合性を合わせる
 export type ReviewJapanTime = Omit<Review, 'createdAt' | 'updatedAt' | 'purchaseDate'> & {
   createdAt: string;
   updatedAt: string;

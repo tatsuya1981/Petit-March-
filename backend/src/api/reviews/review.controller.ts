@@ -1,12 +1,11 @@
 // HTTPレスポンスとリクエストの処理を記述
 
 import { Request, Response, NextFunction } from 'express';
-import reviewModel, { reviewSchema } from './review.model';
-import { Review } from '@prisma/client';
+import reviewModel, { ReviewJapanTime, reviewSchema } from './review.model';
 import { AppError } from '../../middleware/errorHandler';
 
 // レビュー作成
-export const create = async (req: Request, res: Response, next: NextFunction): Promise<Review | void> => {
+export const create = async (req: Request, res: Response, next: NextFunction): Promise<ReviewJapanTime | void> => {
   const parseReview = await reviewSchema.safeParse(req.body);
   if (!parseReview.success) {
     return next(new AppError(parseReview.error.message, 400));
@@ -21,8 +20,11 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
 };
 
 // レビュー獲得
-export const get = async (req: Request, res: Response, next: NextFunction) => {
+export const get = async (req: Request, res: Response, next: NextFunction): Promise<ReviewJapanTime | void> => {
   const reviewId = await parseInt(req.params.id, 10);
+  if (isNaN(reviewId)) {
+    return next(new AppError('無効なＩＤです', 400));
+  }
   const review = await reviewModel.getReviewById(reviewId);
   try {
     if (!review) {
@@ -35,8 +37,11 @@ export const get = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // レビュー更新
-export const update = async (req: Request, res: Response, next: NextFunction) => {
+export const update = async (req: Request, res: Response, next: NextFunction): Promise<ReviewJapanTime | void> => {
   const reviewId = await parseInt(req.params.id, 10);
+  if (isNaN(reviewId)) {
+    return next(new AppError('無効なＩＤです', 400));
+  }
   const parseReview = await reviewSchema.safeParse(req.body);
   if (!parseReview.success) {
     throw new AppError(parseReview.error.message, 400);
@@ -53,6 +58,9 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
 // レビュー削除
 export const remove = async (req: Request, res: Response, next: NextFunction) => {
   const reviewId = await parseInt(req.params.id);
+  if (isNaN(reviewId)) {
+    return next(new AppError('無効なＩＤです', 400));
+  }
   try {
     await reviewModel.deleteReview(reviewId);
     res.status(204).send();

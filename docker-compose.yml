@@ -6,6 +6,8 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+      - ./backend/prisma:/app/prisma
+      - ./backend/dist:/app/dist
       - prisma_generated:/app/node_modules/.prisma
     environment:
       - NODE_ENV=development

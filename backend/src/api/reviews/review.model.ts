@@ -1,51 +1,83 @@
 // データベースの操作、記述とデータ構造の定義を記述
 // データベースクエリの操作やテーブルの構造を反映したインターフェースの定義など
 
-import { Review, Prisma } from "@prisma/client";
-import prisma from "../../config/database";
+import { Review, Prisma } from '@prisma/client';
+import prisma from '../../config/database';
+import { z } from 'zod';
+import { formatToJapanTime } from '../../utils/dateUtils';
 
-export type { Review };
+// zodライブラリを使用してプロパティの型や制約を定義
+export const reviewSchema = z.object({
+  userId: z.number().int().positive(),
+  productId: z.number().int().positive(),
+  brandId: z.number().int().positive(),
+  storeId: z.number().int().positive().optional(),
+  rating: z.number().int().min(1).max(5),
+  title: z.string().min(1).max(255),
+  productName: z.string().min(1).max(255),
+  price: z.number().positive().optional(),
+  purchaseDate: z.date().optional(),
+  content: z.string().min(1).max(2000),
+});
 
-// バリデーション作成
-export class ReviewValidationError extends Error {
-  constructor(public errors: string[]) {
-    super("Validation failed");
-    this.name = "ReviewValidationError";
-  }
-}
+// zodスキーマからTypeScriptの型を生成
+export type ReviewInput = z.infer<typeof reviewSchema>;
+
+// formatToJapanTime が文字列で返される為、型整合性を合わせる
+export type ReviewJapanTime = Omit<Review, 'createdAt' | 'updatedAt' | 'purchaseDate'> & {
+  createdAt: string;
+  updatedAt: string;
+  purchaseDate: string | null;
+};
 
 export class ReviewModel {
-  ValidateReviewData = (data: Review): string[] => {
-    const errors: string[] = [];
-
-    if (!data.userId) errors.push("ユーザーIDは必須です");
-    if (!data.productId) errors.push("商品IDは必須です");
-    if (!data.brandId) errors.push("コンビニブランドは必須です");
-    if (data.rating < 1 || data.rating > 5)
-      errors.push("評価は１から５の間でなくてはなりません");
-    if (!data.title) errors.push("タイトルは必須です");
-    if (!data.productName) errors.push("商品名は必須です");
-    if (!data.content) errors.push("レビューは必須です");
-
-    return errors;
-  };
-
-  ValidateReview = async (data: Review) => {
-    const errors = this.ValidateReviewData(data);
-    if (errors.length > 0) {
-      throw new ReviewValidationError(errors);
-    }
+  // レビュー関連の日付を日本時間へ変更するロジック
+  private convertToJapanTime = (review: Review): ReviewJapanTime => {
+    return {
+      ...review,
+      createdAt: formatToJapanTime(review.createdAt),
+      updatedAt: formatToJapanTime(review.updatedAt),
+      purchaseDate: review.purchaseDate ? formatToJapanTime(review.purchaseDate) : null,
+    };
   };
 
   // レビューの生成
-  createReview = async (data: Prisma.ReviewCreateInput): Promise<Review> => {
+  createReview = async (reviewData: ReviewInput) => {
     return await prisma.review.create({
       data: {
-        ...data,
-        price: data.price ? new Prisma.Decimal(data.price.toString()) : null,
+        ...reviewData,
+        price: reviewData.price ? new Prisma.Decimal(reviewData.price.toString()) : null,
         // ISO-8601形式の日時をDateオブジェクトへ変換
-        purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : null,
+        purchaseDate: reviewData.purchaseDate ? new Date(reviewData.purchaseDate) : null,
       },
+    });
+  };
+
+  // レビュー検索
+  getReviewById = async (id: number): Promise<ReviewJapanTime | undefined> => {
+    const review = await prisma.review.findUnique({
+      where: { id },
+    });
+    if (review) {
+      return this.convertToJapanTime(review);
+    }
+    return undefined;
+  };
+
+  // レビュー更新
+  updateReview = async (id: number, reviewData: ReviewInput) => {
+    const { rating, title, productName, price, purchaseDate, content } = reviewData;
+    const review = await prisma.review.update({
+      where: { id },
+      data: { rating, title, productName, price, purchaseDate, content },
+    });
+    return this.convertToJapanTime(review);
+  };
+
+  // レビュー削除
+  deleteReview = async (id: number) => {
+    return await prisma.review.delete({
+      where: { id },
     });
   };
 }

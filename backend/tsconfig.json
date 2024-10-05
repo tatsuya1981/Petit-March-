@@ -5,6 +5,7 @@
     "outDir": "./dist",
     "rootDir": ".",
     "strict": true,
+    "strictNullChecks": true,
     "esModuleInterop": true,
     "lib": ["esnext"],
     "baseUrl": ".",
@@ -12,6 +13,6 @@
       "*": ["src/*"]
     }
   },
-  "include": ["sec/**/*", "prisma/**/*"],
+  "include": ["src/**/*", "prisma/**/*"],
   "exclude": ["node_modules", "dist"]
 }

@@ -3,9 +3,9 @@
 import { Request, Response } from "express";
 import prisma from "../../config/database";
 
-// 商品カテゴリー取得
+// コンビニブランドカテゴリー取得
 export const get = async (req: Request, res: Response) => {
-  const categories = await prisma.product.findMany({
+  const categories = await prisma.brand.findMany({
     orderBy: {
       // 昇順に並べる
       name: "asc",
@@ -14,11 +14,11 @@ export const get = async (req: Request, res: Response) => {
   res.json(categories);
 };
 
-// 商品カテゴリー作成
+// コンビニブランドカテゴリー作成
 export const create = async (req: Request, res: Response) => {
-  const { name, productId } = req.body;
-  const category = await prisma.product.create({
-    data: { name, productId },
+  const { name, brandId } = req.body;
+  const category = await prisma.brand.create({
+    data: { name, brandId },
   });
   res.status(201).json(category);
 };

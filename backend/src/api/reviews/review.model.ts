@@ -4,7 +4,7 @@
 import { Review, Prisma } from '@prisma/client';
 import prisma from '../../config/database';
 import { z } from 'zod';
-import { formatToJapanTime } from '../../utils/dateUtils';
+import { AppError } from 'middleware/errorHandler';
 
 // zodライブラリを使用してプロパティの型や制約を定義
 export const reviewSchema = z.object({
@@ -31,18 +31,26 @@ export type ReviewJapanTime = Omit<Review, 'createdAt' | 'updatedAt' | 'purchase
 };
 
 export class ReviewModel {
-  // レビュー関連の日付を日本時間へ変更するロジック
-  private convertToJapanTime = (review: Review): ReviewJapanTime => {
-    return {
-      ...review,
-      createdAt: formatToJapanTime(review.createdAt),
-      updatedAt: formatToJapanTime(review.updatedAt),
-      purchaseDate: review.purchaseDate ? formatToJapanTime(review.purchaseDate) : null,
-    };
+  // レビュー検索
+  getReviewById = async (id: number): Promise<Review | AppError | undefined> => {
+    if (isNaN(id)) {
+      return new AppError('Invalid ID', 400);
+    }
+    const review = await prisma.review.findUnique({
+      where: { id },
+    });
+    if (review) {
+      return review;
+    }
+    return undefined;
   };
 
   // レビューの生成
-  createReview = async (reviewData: ReviewInput) => {
+  createReview = async (reviewData: ReviewInput): Promise<Review | AppError> => {
+    const parseReview = await reviewSchema.safeParse(reviewData);
+    if (!parseReview.success) {
+      return new AppError(parseReview.error.message, 400);
+    }
     return await prisma.review.create({
       data: {
         ...reviewData,
@@ -53,29 +61,28 @@ export class ReviewModel {
     });
   };
 
-  // レビュー検索
-  getReviewById = async (id: number): Promise<ReviewJapanTime | undefined> => {
-    const review = await prisma.review.findUnique({
-      where: { id },
-    });
-    if (review) {
-      return this.convertToJapanTime(review);
-    }
-    return undefined;
-  };
-
   // レビュー更新
-  updateReview = async (id: number, reviewData: ReviewInput) => {
-    const { rating, title, productName, price, purchaseDate, content } = reviewData;
+  updateReview = async (id: number, reviewData: ReviewInput): Promise<Review | AppError> => {
+    if (isNaN(id)) {
+      return new AppError('Invalid ID', 400);
+    }
+    const parseReview = await reviewSchema.safeParse(reviewData);
+    if (!parseReview.success) {
+      throw new AppError(parseReview.error.message, 400);
+    }
+    const { rating, title, productName, price, purchaseDate, content } = parseReview.data;
     const review = await prisma.review.update({
       where: { id },
       data: { rating, title, productName, price, purchaseDate, content },
     });
-    return this.convertToJapanTime(review);
+    return review;
   };
 
   // レビュー削除
   deleteReview = async (id: number) => {
+    if (isNaN(id)) {
+      return new AppError('Invalid ID', 400);
+    }
     return await prisma.review.delete({
       where: { id },
     });

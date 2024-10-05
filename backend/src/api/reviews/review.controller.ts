@@ -1,16 +1,26 @@
 // HTTPレスポンスとリクエストの処理を記述
 
 import { Request, Response, NextFunction } from 'express';
-import reviewModel, { ReviewJapanTime, reviewSchema } from './review.model';
+import reviewModel, { ReviewJapanTime } from './review.model';
 import { AppError } from '../../middleware/errorHandler';
+
+// レビュー獲得
+export const get = async (req: Request, res: Response, next: NextFunction): Promise<ReviewJapanTime | void> => {
+  const reviewId = await parseInt(req.params.id, 10);
+  try {
+    const review = await reviewModel.getReviewById(reviewId);
+    if (!review) {
+      throw new AppError('not found review', 400);
+    }
+    res.json(review);
+  } catch (error) {
+    next(error);
+  }
+};
 
 // レビュー作成
 export const create = async (req: Request, res: Response, next: NextFunction): Promise<ReviewJapanTime | void> => {
-  const parseReview = await reviewSchema.safeParse(req.body);
-  if (!parseReview.success) {
-    return next(new AppError(parseReview.error.message, 400));
-  }
-  const reviewData = parseReview.data;
+  const reviewData = req.body;
   try {
     const newReview = await reviewModel.createReview(reviewData);
     res.status(201).json(newReview);
@@ -19,34 +29,10 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
   }
 };
 
-// レビュー獲得
-export const get = async (req: Request, res: Response, next: NextFunction): Promise<ReviewJapanTime | void> => {
-  const reviewId = await parseInt(req.params.id, 10);
-  if (isNaN(reviewId)) {
-    return next(new AppError('無効なＩＤです', 400));
-  }
-  const review = await reviewModel.getReviewById(reviewId);
-  try {
-    if (!review) {
-      throw new AppError('レビューが見つかりません', 400);
-    }
-    res.json(review);
-  } catch (error) {
-    next(error);
-  }
-};
-
 // レビュー更新
 export const update = async (req: Request, res: Response, next: NextFunction): Promise<ReviewJapanTime | void> => {
   const reviewId = await parseInt(req.params.id, 10);
-  if (isNaN(reviewId)) {
-    return next(new AppError('無効なＩＤです', 400));
-  }
-  const parseReview = await reviewSchema.safeParse(req.body);
-  if (!parseReview.success) {
-    throw new AppError(parseReview.error.message, 400);
-  }
-  const review = parseReview.data;
+  const review = req.body;
   try {
     const updateReview = await reviewModel.updateReview(reviewId, review);
     res.json(updateReview);
@@ -58,9 +44,6 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
 // レビュー削除
 export const remove = async (req: Request, res: Response, next: NextFunction) => {
   const reviewId = await parseInt(req.params.id);
-  if (isNaN(reviewId)) {
-    return next(new AppError('無効なＩＤです', 400));
-  }
   try {
     await reviewModel.deleteReview(reviewId);
     res.status(204).send();

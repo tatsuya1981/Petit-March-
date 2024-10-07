@@ -1,5 +1,5 @@
 import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { BUCKET_NAME, s3Client } from 'config/s3Client';
+import { BUCKET_NAME, s3Client } from '../config/s3Client';
 import { v4 } from 'uuid';
 
 export const uploadToS3 = async (file: Express.Multer.File): Promise<string> => {

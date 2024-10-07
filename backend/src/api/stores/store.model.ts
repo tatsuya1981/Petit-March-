@@ -1,7 +1,7 @@
 import { Store } from '@prisma/client';
 import prisma from '../../config/database';
 import { z } from 'zod';
-import { AppError } from 'middleware/errorHandler';
+import { AppError } from '../../middleware/errorHandler';
 
 // zodライブラリを使用してプロパティの型や制約を定義
 export const storeSchema = z.object({

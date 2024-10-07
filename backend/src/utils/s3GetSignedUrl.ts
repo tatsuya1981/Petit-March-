@@ -1,6 +1,6 @@
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { BUCKET_NAME, s3Client } from 'config/s3Client';
+import { BUCKET_NAME, s3Client } from '../config/s3Client';
 
 // プライベートファイルへ一時的にアクセスする関数
 export const getSignedS3Url = async (key: string): Promise<string> => {

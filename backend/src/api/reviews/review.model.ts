@@ -15,8 +15,11 @@ export const reviewSchema = z.object({
   rating: z.number().int().min(1).max(5),
   title: z.string().min(1).max(255),
   productName: z.string().min(1).max(255),
-  price: z.number().positive().optional(),
-  purchaseDate: z.date().optional(),
+  price: z.number().min(0).optional(),
+  purchaseDate: z
+    .string()
+    .transform((str) => new Date(str))
+    .optional(),
   content: z.string().min(1).max(2000),
   image: z
     .array(
@@ -68,7 +71,10 @@ export class ReviewModel {
     return await prisma.review.create({
       data: {
         ...reviewDataWithoutImage,
-        price: reviewDataWithoutImage.price ? new Prisma.Decimal(reviewDataWithoutImage.price.toString()) : null,
+        price:
+          reviewDataWithoutImage.price !== undefined
+            ? new Prisma.Decimal(reviewDataWithoutImage.price.toString())
+            : null,
         // ISO-8601形式の日時をDateオブジェクトへ変換
         purchaseDate: reviewDataWithoutImage.purchaseDate ? new Date(reviewDataWithoutImage.purchaseDate) : null,
         image: {
@@ -93,7 +99,10 @@ export class ReviewModel {
       where: { id },
       data: {
         ...reviewDataWithoutImage,
-        price: reviewDataWithoutImage.price ? new Prisma.Decimal(reviewDataWithoutImage.price.toString()) : null,
+        price:
+          reviewDataWithoutImage.price !== undefined
+            ? new Prisma.Decimal(reviewDataWithoutImage.price.toString())
+            : null,
         // ISO-8601形式の日時をDateオブジェクトへ変換
         purchaseDate: reviewDataWithoutImage.purchaseDate ? new Date(reviewDataWithoutImage.purchaseDate) : null,
         image: {

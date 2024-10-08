@@ -1,5 +1,6 @@
 import { S3Client } from '@aws-sdk/client-s3';
 
+// 環境変数が存在するかどうかチェック
 const getRequiredEnvVar = (name: string): string => {
   const value = process.env[name];
   if (!value) {
@@ -8,6 +9,7 @@ const getRequiredEnvVar = (name: string): string => {
   return value;
 };
 
+// S3クライアントの設定
 export const s3Client = new S3Client({
   region: getRequiredEnvVar('AWS_REGION'),
   credentials: {

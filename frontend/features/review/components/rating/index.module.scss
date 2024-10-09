@@ -6,12 +6,19 @@
 }
 
 .textContainer {
-  width: 80%;
-  display: inline-block;
   text-align: left;
   font-weight: bold;
   ::after {
     content: '*';
     color: red;
   }
+}
+
+.starInput {
+  display: none;
+}
+
+.starIcon {
+  cursor: pointer;
+  margin-bottom: 1rem;
 }

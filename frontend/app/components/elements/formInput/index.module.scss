@@ -1,0 +1,16 @@
+@use '../../../../app/styles/mixins.scss';
+
+.form {
+  width: 80%;
+  display: inline-block;
+}
+
+.input {
+  width: 100%;
+  height: 4vh;
+  border-radius: 10px;
+}
+
+.required {
+  color: rgba(var(--color-text-red));
+}

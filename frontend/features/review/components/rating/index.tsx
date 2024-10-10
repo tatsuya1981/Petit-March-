@@ -5,7 +5,9 @@ import styles from './index.module.scss';
 import { Star } from 'lucide-react';
 
 export const Rating = () => {
+  // 評価点のステート
   const [rating, setRating] = useState(0);
+  // 星をhoverした時のステート
   const [hover, setHover] = useState(0);
 
   return (
@@ -15,7 +17,9 @@ export const Rating = () => {
           <p className={styles.text}>星評価（満点は星５つ）</p>
         </div>
         <div className={styles.ratingContainer}>
+          {/* ラジオボタンの配列を５つ作成 */}
           {[...Array(5)].map((_, index) => {
+            // インデックス番号をレート評価に
             const ratingValue = index + 1;
             return (
               <label key={index}>
@@ -39,7 +43,7 @@ export const Rating = () => {
             );
           })}
         </div>
-        <p>選択した評価: {rating}</p>
+        <p className={styles.ratingText}>選択した評価: {rating}</p>
       </div>
     </>
   );

@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
+    "@types/react-datepicker": "^7.0.0",
     "classnames": "^2.5.1",
     "framer-motion": "^11.5.4",
     "lucide-react": "^0.451.0",
     "next": "14.2.7",
     "react": "^18",
+    "react-datepicker": "^7.4.0",
     "react-dom": "^18",
     "sass": "^1.77.8",
     "zod": "^3.23.8"

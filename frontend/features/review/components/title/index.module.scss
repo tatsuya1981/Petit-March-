@@ -24,10 +24,10 @@
   margin-bottom: 1rem;
   ::before {
     content: '*';
-    color: red;
+    color: rgba(var(--color-text-red));
   }
 }
 
 .stamp {
-  color: red;
+  color: rgba(var(--color-text-red));
 }

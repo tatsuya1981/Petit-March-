@@ -1,0 +1,17 @@
+@use '../../../../app/styles/mixins.scss';
+
+.container {
+  margin-bottom: 1rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+}
+
+.date {
+  border-radius: 10px;
+  height: 4vh;
+  padding-left: 1rem;
+}

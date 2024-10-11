@@ -59,7 +59,7 @@ export const create = [
   // Multerミドルウェアにより３つまでの画像をアップロード処理
   upload.array('image', 3),
   async (req: Request, res: Response, next: NextFunction): Promise<Review | void> => {
-    //Multerミドルウェアによりreqオブジェクトにプロパティ追加
+    //Multer によってアップロードされたファイル情報を取得
     const files = req.files as Express.Multer.File[];
     const reviewData = req.body;
     // リクエストの画像ファイルを専用関数でS3へアップロード
@@ -82,7 +82,7 @@ export const create = [
 export const update = [
   upload.array('image', 3),
   async (req: Request, res: Response, next: NextFunction): Promise<Review | void> => {
-    //Multerミドルウェアによりreqオブジェクトにプロパティ追加
+    //Multer によってアップロードされたファイル情報を取得
     const files = req.files as Express.Multer.File[];
     const reviewId = parseInt(req.params.id, 10);
     const reviewData = req.body;

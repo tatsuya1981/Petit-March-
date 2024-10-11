@@ -1,0 +1,22 @@
+@use '../../../../app/styles/mixins.scss';
+
+.form {
+  width: 100%;
+  display: inline-block;
+  margin-bottom: 1rem;
+
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+
+  select {
+    height: 4vh;
+    border-radius: 10px;
+  }
+}
+
+.required {
+  color: rgba(var(--color-text-red));
+}

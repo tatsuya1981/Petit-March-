@@ -1,13 +1,16 @@
+'use client';
+
 import { useState } from 'react';
 import styles from './index.module.scss';
 import FormSelect from '@/components/elements/formSelect';
 import FormInput from '@/components/elements/formInput';
+import DatePick from '@/components/elements/datePicker';
 
 const ProductInfo = () => {
   const [category, setCategory] = useState('');
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
-  const [purchaseDate, setPurchaseDate] = useState('');
+  const [purchaseDate, setPurchaseDate] = useState<Date | null>(null);
   const [brand, setBrand] = useState('');
 
   const categoryOptions = [
@@ -52,22 +55,18 @@ const ProductInfo = () => {
         onChange={(e) => setProductName(e.target.value)}
         required
       />
-      <FormInput
-        label="価格"
-        name="price"
-        type="number"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
-        required
-      />
+      <FormInput label="価格" name="price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
+      <DatePick label="購入日" selected={purchaseDate} onChange={(date) => setPurchaseDate(date)} />
       <FormSelect
-        label="購入日"
-        name="purchaseDate"
-        options={categoryOptions}
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
+        label="コンビニブランド"
+        name="brand"
+        options={brandOptions}
+        value={brand}
+        onChange={(e) => setBrand(e.target.value)}
         required
       />
     </div>
   );
 };
+
+export default ProductInfo;

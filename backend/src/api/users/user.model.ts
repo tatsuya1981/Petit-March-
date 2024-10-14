@@ -94,9 +94,9 @@ export class UserModel {
   };
 
   // ユーザー検索
-  getUserById = async (id: number): Promise<UserResponse | AppError | undefined> => {
+  getUserById = async (id: number): Promise<UserResponse | undefined> => {
     if (isNaN(id)) {
-      return new AppError('Invalid ID', 400);
+      throw new Error('Invalid ID');
     }
     const user = await prisma.user.findUnique({
       where: { id },
@@ -108,11 +108,11 @@ export class UserModel {
   };
 
   // ユーザー作成
-  createUser = async (userData: UserInput): Promise<UserResponse | AppError> => {
+  createUser = async (userData: UserInput): Promise<UserResponse> => {
     // zodによるバリデーション検証
     const parseUser = await userSchema.safeParse(userData);
     if (!parseUser.success) {
-      return new AppError(parseUser.error.message, 400);
+      throw new Error(parseUser.error.message);
     }
     const { name, email, generation, passwordDigest, gender } = parseUser.data;
     // パスワードのハッシュ化
@@ -131,14 +131,14 @@ export class UserModel {
   };
 
   // ユーザー更新
-  updateUser = async (id: number, userData: UserInput): Promise<UserResponse | AppError> => {
+  updateUser = async (id: number, userData: UserInput): Promise<UserResponse> => {
     if (isNaN(id)) {
-      return new AppError('Invalid ID', 400);
+      throw new Error('Invalid ID');
     }
     // zodによるバリデーション検証
     const parseUser = await userSchema.safeParse(userData);
     if (!parseUser.success) {
-      return new AppError(parseUser.error.message, 400);
+      throw new Error(parseUser.error.message);
     }
     const { name, email, generation, passwordDigest, gender } = parseUser.data;
     // パスワードのハッシュ化
@@ -159,7 +159,7 @@ export class UserModel {
   // ユーザー削除
   deleteUser = async (id: number) => {
     if (isNaN(id)) {
-      return new AppError('Invalid ID', 400);
+      throw new Error('Invalid ID');
     }
     return prisma.user.delete({
       where: { id },

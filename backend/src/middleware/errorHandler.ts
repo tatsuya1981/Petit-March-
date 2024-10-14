@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { Request, Response, NextFunction } from 'express';
 
 export class AppError extends Error {
@@ -20,11 +21,25 @@ export const errorHandler = (err: Error, req: Request, res: Response, next: Next
       status: 'error',
       message: err.message,
     });
+  } else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    // prisma の特定エラーコードの処理
+    if (err.code === 'P2025') {
+      res.status(404).json({
+        status: 'error',
+        message: 'Record not found',
+      });
+    } else {
+      // その他の Prisma 関連のエラー
+      res.status(404).json({
+        status: 'error',
+        message: 'Prisma error ${err.message}',
+      });
+    }
   } else {
     // 予期しないエラーの場合
     res.status(500).json({
       status: 'error',
-      message: 'サーバー内でエラーが発生しました',
+      message: 'An error occurred on the server',
     });
   }
 };

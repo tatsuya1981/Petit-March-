@@ -1,11 +1,11 @@
 // HTTPレスポンスとリクエストの処理を記述
 
 import { Request, Response, NextFunction } from 'express';
-import reviewModel, { processImages, ReviewWithImages } from './review.model';
+import reviewModel from './review.model';
 import { AppError } from '../../middleware/errorHandler';
 import multer from 'multer';
-import { getSignedS3Url } from '../../utils/s3GetSignedUrl';
 import { Review } from '@prisma/client';
+import S3Service from '../../utils/s3Service';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -30,13 +30,17 @@ export const get = async (req: Request, res: Response, next: NextFunction): Prom
     review.images = await Promise.all(
       review.images.map(async (img) => ({
         ...img,
-        imageUrl: await getSignedS3Url(img.imageUrl),
+        imageUrl: await S3Service.getSignedS3Url(img.imageUrl),
       })),
     );
 
     res.json(review);
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(new AppError(error.message, 400));
+    } else {
+      next(error);
+    }
   }
 };
 
@@ -63,7 +67,11 @@ export const create = [
       const newReview = await reviewModel.createReview(reviewData, files);
       res.status(201).json(newReview);
     } catch (error) {
-      next(error);
+      if (error instanceof Error) {
+        next(new AppError(error.message, 400));
+      } else {
+        next(error);
+      }
     }
   },
 ];
@@ -88,7 +96,11 @@ export const update = [
       const updateReview = await reviewModel.updateReview(reviewId, reviewData, files);
       res.json(updateReview);
     } catch (error) {
-      next(error);
+      if (error instanceof Error) {
+        next(new AppError(error.message, 400));
+      } else {
+        next(error);
+      }
     }
   },
 ];
@@ -100,6 +112,10 @@ export const remove = async (req: Request, res: Response, next: NextFunction) =>
     await reviewModel.deleteReview(reviewId);
     res.status(204).send();
   } catch (error) {
-    next(error);
+    if (error instanceof Error) {
+      next(new AppError(error.message, 400));
+    } else {
+      next(error);
+    }
   }
 };

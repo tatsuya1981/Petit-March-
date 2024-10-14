@@ -21,24 +21,24 @@ export type StoreInput = z.infer<typeof storeSchema>;
 
 export class StoreModel {
   // ストア情報の取得
-  getStore = async (id: number): Promise<Store | AppError> => {
+  getStore = async (id: number): Promise<Store> => {
     if (isNaN(id)) {
-      return new AppError('Invalid ID', 400);
+      throw new Error('Invalid ID');
     }
     const store = await prisma.store.findUnique({
       where: { id },
     });
     if (store === null) {
-      return new AppError('not found store', 400);
+      throw new Error('not found store');
     }
     return store;
   };
 
   // ストア情報の作成
-  createStore = async (storeData: StoreInput): Promise<Store | AppError> => {
+  createStore = async (storeData: StoreInput): Promise<Store> => {
     const parseStore = await storeSchema.safeParse(storeData);
     if (!parseStore.success) {
-      return new AppError(parseStore.error.message, 400);
+      throw new Error(parseStore.error.message);
     }
     return await prisma.store.create({
       data: storeData,
@@ -46,13 +46,13 @@ export class StoreModel {
   };
 
   // ストア情報の更新
-  updateStore = async (id: number, storeData: StoreInput): Promise<Store | AppError> => {
+  updateStore = async (id: number, storeData: StoreInput): Promise<Store> => {
     if (isNaN(id)) {
-      return new AppError('Invalid ID', 400);
+      throw new Error('Invalid ID');
     }
     const parseStore = await storeSchema.safeParse(storeData);
     if (!parseStore.success) {
-      return new AppError(parseStore.error.message, 400);
+      throw new Error(parseStore.error.message);
     }
     return await prisma.store.update({
       where: { id },
@@ -61,9 +61,9 @@ export class StoreModel {
   };
 
   // ストア情報の削除
-  deleteStore = async (id: number): Promise<Store | AppError> => {
+  deleteStore = async (id: number): Promise<Store> => {
     if (isNaN(id)) {
-      return new AppError('Invalid ID', 400);
+      throw new Error('Invalid ID');
     }
     return await prisma.store.delete({
       where: { id },

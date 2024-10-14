@@ -13,7 +13,7 @@ interface DatePickerProps {
 const DatePick: React.FC<DatePickerProps> = ({ label, selected, onChange, required = false }) => {
   return (
     <div className={styles.container}>
-      <label htmlFor="purchaseDate">
+      <label>
         {label}
         {required && <span className={styles.required}>*</span>}
       </label>

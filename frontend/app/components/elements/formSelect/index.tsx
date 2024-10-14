@@ -19,7 +19,7 @@ interface Option {
 const FormSelect: React.FC<FormSelectProps> = ({ label, name, options, value, onChange, required = false }) => {
   return (
     <div className={styles.form}>
-      <label htmlFor={name}>
+      <label>
         {label}
         {/* 必須項目の場合、印を表示する */}
         {required && <span className={styles.required}>*</span>}

@@ -5,3 +5,12 @@
   flex-direction: column;
   width: 80%;
 }
+
+.formWrapper {
+  display: flex;
+  align-items: end;
+}
+
+.unit {
+  padding-bottom: 1rem;
+}

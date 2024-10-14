@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 export class AppError extends Error {
   statusCode: number;
@@ -11,24 +11,20 @@ export class AppError extends Error {
   }
 }
 
-export const errorHandler = (
-  err: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction): void => {
   console.error(err);
 
   if (err instanceof AppError) {
-    return res.status(err.statusCode).json({
-      status: "error",
+    // カスタムエラーの場合
+    res.status(err.statusCode).json({
+      status: 'error',
       message: err.message,
     });
+  } else {
+    // 予期しないエラーの場合
+    res.status(500).json({
+      status: 'error',
+      message: 'サーバー内でエラーが発生しました',
+    });
   }
-
-  // 予期しないエラーの場合
-  res.status(500).json({
-    status: "error",
-    message: "サーバー内でエラーが発生しました",
-  });
 };

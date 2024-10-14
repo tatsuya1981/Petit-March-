@@ -55,7 +55,10 @@ const ProductInfo = () => {
         onChange={(e) => setProductName(e.target.value)}
         required
       />
-      <FormInput label="価格" name="price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
+      <div className={styles.formWrapper}>
+        <FormInput label="価格" name="price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
+        <span className={styles.unit}>円</span>
+      </div>
       <DatePick label="購入日" selected={purchaseDate} onChange={(date) => setPurchaseDate(date)} />
       <FormSelect
         label="コンビニブランド"

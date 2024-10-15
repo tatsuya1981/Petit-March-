@@ -1,0 +1,23 @@
+@use '../../../../app/styles/mixins.scss';
+
+.form {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+
+  label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+}
+
+.input {
+  width: 100%;
+  height: 4vh;
+  border-radius: 10px;
+  padding-left: 1rem;
+}
+
+.required {
+  color: rgba(var(--color-text-red));
+}

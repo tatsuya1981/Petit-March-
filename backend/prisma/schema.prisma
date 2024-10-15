@@ -49,7 +49,7 @@ model Review {
   product Product @relation(fields: [productId], references: [productId])
   brand   Brand   @relation(fields: [brandId], references: [brandId])
   store   Store?  @relation(fields: [storeId], references: [id])
-  image   Image[]
+  images  Image[]
   Like    Like[]
 
   @@index([userId])
@@ -64,6 +64,7 @@ model Image {
   reviewId  Int
   order     Int
   imageUrl  String
+  isMain    Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

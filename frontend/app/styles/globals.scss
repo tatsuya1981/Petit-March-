@@ -16,6 +16,7 @@ global > color
   --color-bg-accent-black: 26, 18, 11;
   --color-bg-accent-red: 239, 6, 6;
   --color-text-primary: 229, 229, 203;
+  --color-text-red: 239, 6, 6;
 
   /*!
 global > content-width
@@ -40,7 +41,6 @@ body {
 }
 
 body {
-  font-size: 16px;
   color: rgb(var(--color-bg-accent-darkBrown));
   background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }

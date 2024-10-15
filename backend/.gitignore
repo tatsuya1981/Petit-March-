@@ -22,3 +22,6 @@ Thumbs.db
 
 # google cloud key
 **/petit-marche-key.json
+
+# backup
+db_backup.sql

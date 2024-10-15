@@ -57,7 +57,7 @@ export const userSchema = z.object({
   email: z.string().email('有効なメールアドレスを入力してください'),
   passwordDigest: z.string().min(8, 'パスワードは８文字以上でなくてはなりません'),
   generation: z.number().int().min(15).max(70).nullable(),
-  gender: z.enum(['mail', 'female']).nullable(),
+  gender: z.enum(['male', 'female']).nullable(),
 });
 
 // zodスキーマからTypeScriptの型を生成

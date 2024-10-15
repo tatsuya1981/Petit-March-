@@ -6,6 +6,7 @@ import FormSelect from '@/components/elements/formSelect';
 import FormInput from '@/components/elements/formInput';
 import DatePick from '@/components/elements/datePicker';
 import axios from 'axios';
+import ReviewContent from '../reviewContent';
 
 interface Option {
   value: string;
@@ -20,6 +21,8 @@ const ProductInfo = () => {
   const [price, setPrice] = useState('');
   const [purchaseDate, setPurchaseDate] = useState<Date | null>(null);
   const [brand, setBrand] = useState('');
+  const [reviewTitle, setReviewTitle] = useState('');
+  const [reviewContent, setReviewContent] = useState('');
 
   useEffect(() => {
     const fetchCategoryOptions = async () => {
@@ -82,6 +85,12 @@ const ProductInfo = () => {
         value={brand}
         onChange={(e) => setBrand(e.target.value)}
         required
+      />
+      <ReviewContent
+        title={reviewTitle}
+        setTitle={setReviewTitle}
+        content={reviewContent}
+        setContent={setReviewContent}
       />
     </div>
   );

@@ -119,5 +119,20 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     fileInputRef.current?.click();
   };
 
-  return <div className={styles.uploadContainer}></div>;
+  return (
+    <div className={styles.uploadContainer}>
+      <div className={styles.dropArea} onDragOver={handleDragOver} onDrop={handleDrop} onClick={triggerFileInput}>
+        <p>クリックまたはドラッグ＆ドロップで画像をアップロード</p>
+        <p>（最大{maxImages}枚まで）</p>
+      </div>
+      <input type="file" accept="image/*" multiple onChange={handleFileChange} ref={fileInputRef} />
+      <div className={styles.previewContainer}>
+        {previewUrls.map((url, index) => (
+          <img key={index} src={url} alt={`プレビュー ${index + 1}`} className={styles.previewImage} />
+        ))}
+      </div>
+    </div>
+  );
 };
+
+export default ImageUpload;

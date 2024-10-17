@@ -77,4 +77,47 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       render.readAsDataURL(file);
     });
   };
+
+  const handleFiles = async (files: File[]) => {
+    // 画像の最大数チェック
+    if (files.length > maxImages) {
+      alert('最大${maxImages}枚までアップロードできます');
+      return;
+    }
+
+    // 全画像を一斉にリサイズ処理
+    const resizedFiles = await Promise.all(files.map(resizeImage));
+    // プレビュー用のURLの配列を生成
+    const newPreviewUrls = resizedFiles.map((file) => URL.createObjectURL(file));
+    // プレビュー用URLの配列をステートへ格納
+    setPreviewUrls(newPreviewUrls);
+    // リサイズ後の画像ファイルデータを親コンポーネントへ渡す
+    onImagesSelected(resizedFiles);
+  };
+
+  // ユーザーがダイアログで画像を選択
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    handleFiles(files);
+  };
+
+  // ドラッグ＆ドロップ機能
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    // ドラッグ時ブラウザでファイルが開くのを無効化
+    event.preventDefault();
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    // ドロップされたファイルのリストを配列化
+    const files = Array.from(event.dataTransfer.files);
+    handleFiles(files);
+  };
+
+  // ドラッグ＆ドロップエリアをクリックするとダイアログ表示
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  return <div className={styles.uploadContainer}></div>;
 };

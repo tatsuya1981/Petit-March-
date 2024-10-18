@@ -1,8 +1,15 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './index.module.scss';
+import { v4 as uuidV4 } from 'uuid';
+
+interface ImageFile extends File {
+  id: string;
+  order: number;
+  isMain: boolean;
+}
 
 interface ImageUploadProps {
-  onImagesSelected: (files: File[]) => void;
+  onImagesSelected: (files: ImageFile[]) => void;
   maxImages?: number;
   maxWidth?: number;
   maxHeight?: number;
@@ -14,11 +21,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   maxWidth = 1200,
   maxHeight = 1200,
 }) => {
+  const [images, setImages] = useState<ImageFile[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   // useRefで プログラムから input 要素にアクセス出来る様にする
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const resizeImage = (file: File): Promise<File> => {
+  const resizeImage = (file: File, order: number): Promise<ImageFile> => {
     return new Promise((resolve) => {
       // FileRender で画像ファイルの読み込み
       const render = new FileReader();
@@ -53,14 +61,20 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           ctx?.drawImage(img, 0, 0, width, height);
 
           canvas.toBlob(
+            // toBlob メソッドで Canvas の内容を画像ファイルとしてエクスポート
             (blob) => {
               if (blob) {
-                // バイナリデータを File へ変換
+                // blob のJPEG形式のバイナリデータを File へ変換
                 const resizeFile = new File([blob], file.name, {
                   // MIME タイプの指定
                   type: 'image/jpeg',
                   lastModified: Date.now(),
-                });
+                }) as ImageFile;
+                // 一意のIDを作成
+                resizeFile.id = uuidV4();
+                resizeFile.order = order;
+                // 最初の画像をメイン画像とする
+                resizeFile.isMain = order === 0;
                 // Promise の resolve でリサイズ後のファイルを返す
                 resolve(resizeFile);
               }
@@ -70,7 +84,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             0.7,
           );
         };
-        // 読み込みが完了したデータURLを result から取り出し img オブジェクトの src に格納
+        // 読み込みが完了したバイナリデータURLを result から取り出し img オブジェクトの src に格納
         img.src = e.target?.result as string;
       };
       // ユーザーの画像ファイルをデータURLへ変換する処理
@@ -80,19 +94,22 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const handleFiles = async (files: File[]) => {
     // 画像の最大数チェック
-    if (files.length > maxImages) {
-      alert('最大${maxImages}枚までアップロードできます');
+    if (images.length + files.length > maxImages) {
+      alert(`最大${maxImages}枚までアップロードできます`);
       return;
     }
-
+    const startOrder = images.length;
     // 全画像を一斉にリサイズ処理
-    const resizedFiles = await Promise.all(files.map(resizeImage));
+    const resizedFiles = await Promise.all(files.map((file, index) => resizeImage(file, startOrder + index)));
+    const newImages = [...images, ...resizedFiles];
     // プレビュー用のURLの配列を生成
-    const newPreviewUrls = resizedFiles.map((file) => URL.createObjectURL(file));
+    const newPreviewUrls = [...previewUrls, ...resizedFiles.map((file) => URL.createObjectURL(file))];
+
+    setImages(newImages);
     // プレビュー用URLの配列をステートへ格納
     setPreviewUrls(newPreviewUrls);
     // リサイズ後の画像ファイルデータを親コンポーネントへ渡す
-    onImagesSelected(resizedFiles);
+    onImagesSelected(newImages);
   };
 
   // ユーザーがダイアログで画像を選択
@@ -119,16 +136,45 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     fileInputRef.current?.click();
   };
 
+  const handleDeleteImage = (id: string) => {
+    const updateImages = images.filter((img) => img.id !== id);
+    const updatePreviewUrls = previewUrls.filter((_, index) => index !== removeImageIndex);
+
+    // 削除する画像のプレビューURLを開放する
+    const removeImageIndex = images.findIndex((img) => img.id === id);
+    if (removeImageIndex !== -1) {
+      URL.revokeObjectURL(previewUrls[removeImageIndex]);
+    }
+
+    updateImages.forEach((img, index) => {
+      img.order = index;
+      img.isMain = index === 0;
+    });
+
+    setImages(updateImages);
+    setPreviewUrls(updatePreviewUrls);
+    onImagesSelected(updateImages);
+  };
+
   return (
     <div className={styles.uploadContainer}>
+      {/** ドロップした場合とクリックされた場合のイベントをそれぞれ設定 */}
       <div className={styles.dropArea} onDragOver={handleDragOver} onDrop={handleDrop} onClick={triggerFileInput}>
         <p>クリックまたはドラッグ＆ドロップで画像をアップロード</p>
         <p>（最大{maxImages}枚まで）</p>
       </div>
+      {/** 画像ファイル入力フィールド 見えない様に設定 */}
       <input type="file" accept="image/*" multiple onChange={handleFileChange} ref={fileInputRef} />
       <div className={styles.previewContainer}>
+        {/** 画像URLをループ処理してプレビュー表示 */}
         {previewUrls.map((url, index) => (
-          <img key={index} src={url} alt={`プレビュー ${index + 1}`} className={styles.previewImage} />
+          <div key={images[index].id} className={styles.previewWrapper}>
+            <img src={url} alt={`プレビュー ${index + 1}`} className={styles.previewImage} />
+            {index === 0 && <span className={styles.mainImageBadge}>メイン</span>}
+            <button type="button" className={styles.deleteButton} onClick={() => handleDeleteImage(images[index].id)}>
+              削除
+            </button>
+          </div>
         ))}
       </div>
     </div>

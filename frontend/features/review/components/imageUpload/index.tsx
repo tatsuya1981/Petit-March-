@@ -1,8 +1,13 @@
 import React, { useRef, useState } from 'react';
 import styles from './index.module.scss';
 
+interface ImageFile extends File {
+  order: number;
+  isMain: boolean;
+}
+
 interface ImageUploadProps {
-  onImagesSelected: (files: File[]) => void;
+  onImagesSelected: (files: ImageFile[]) => void;
   maxImages?: number;
   maxWidth?: number;
   maxHeight?: number;
@@ -18,7 +23,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   // useRefで プログラムから input 要素にアクセス出来る様にする
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const resizeImage = (file: File): Promise<File> => {
+  const resizeImage = (file: File, order: number): Promise<ImageFile> => {
     return new Promise((resolve) => {
       // FileRender で画像ファイルの読み込み
       const render = new FileReader();
@@ -53,14 +58,18 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           ctx?.drawImage(img, 0, 0, width, height);
 
           canvas.toBlob(
+            // toBlob メソッドで Canvas の内容を画像ファイルとしてエクスポート
             (blob) => {
               if (blob) {
-                // バイナリデータを File へ変換
+                // blob のJPEG形式のバイナリデータを File へ変換
                 const resizeFile = new File([blob], file.name, {
                   // MIME タイプの指定
                   type: 'image/jpeg',
                   lastModified: Date.now(),
-                });
+                }) as ImageFile;
+                resizeFile.order = order;
+                // 最初の画像をメイン画像とする
+                resizeFile.isMain = order === 0;
                 // Promise の resolve でリサイズ後のファイルを返す
                 resolve(resizeFile);
               }
@@ -70,7 +79,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             0.7,
           );
         };
-        // 読み込みが完了したデータURLを result から取り出し img オブジェクトの src に格納
+        // 読み込みが完了したバイナリデータURLを result から取り出し img オブジェクトの src に格納
         img.src = e.target?.result as string;
       };
       // ユーザーの画像ファイルをデータURLへ変換する処理
@@ -86,7 +95,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     }
 
     // 全画像を一斉にリサイズ処理
-    const resizedFiles = await Promise.all(files.map(resizeImage));
+    const resizedFiles = await Promise.all(files.map((file, index) => resizeImage(file, index)));
     // プレビュー用のURLの配列を生成
     const newPreviewUrls = resizedFiles.map((file) => URL.createObjectURL(file));
     // プレビュー用URLの配列をステートへ格納
@@ -121,14 +130,20 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   return (
     <div className={styles.uploadContainer}>
+      {/** ドロップした場合とクリックされた場合のイベントをそれぞれ設定 */}
       <div className={styles.dropArea} onDragOver={handleDragOver} onDrop={handleDrop} onClick={triggerFileInput}>
         <p>クリックまたはドラッグ＆ドロップで画像をアップロード</p>
         <p>（最大{maxImages}枚まで）</p>
       </div>
+      {/** 画像ファイル入力フィールド 見えない様に設定 */}
       <input type="file" accept="image/*" multiple onChange={handleFileChange} ref={fileInputRef} />
       <div className={styles.previewContainer}>
+        {/** 画像URLをループ処理してプレビュー表示 */}
         {previewUrls.map((url, index) => (
-          <img key={index} src={url} alt={`プレビュー ${index + 1}`} className={styles.previewImage} />
+          <div key={index} className={styles.previewWrapper}>
+            <img src={url} alt={`プレビュー ${index + 1}`} className={styles.previewImage} />
+            {index === 0 && <span className={styles.mainImageBadge}>メイン</span>}
+          </div>
         ))}
       </div>
     </div>

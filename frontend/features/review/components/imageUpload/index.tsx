@@ -1,7 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './index.module.scss';
+import { v4 as uuidV4 } from 'uuid';
 
 interface ImageFile extends File {
+  id: string;
   order: number;
   isMain: boolean;
 }
@@ -19,6 +21,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   maxWidth = 1200,
   maxHeight = 1200,
 }) => {
+  const [images, setImages] = useState<ImageFile[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   // useRefで プログラムから input 要素にアクセス出来る様にする
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -67,6 +70,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                   type: 'image/jpeg',
                   lastModified: Date.now(),
                 }) as ImageFile;
+                // 一意のIDを作成
+                resizeFile.id = uuidV4();
                 resizeFile.order = order;
                 // 最初の画像をメイン画像とする
                 resizeFile.isMain = order === 0;
@@ -89,19 +94,22 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const handleFiles = async (files: File[]) => {
     // 画像の最大数チェック
-    if (files.length > maxImages) {
-      alert('最大${maxImages}枚までアップロードできます');
+    if (images.length + files.length > maxImages) {
+      alert(`最大${maxImages}枚までアップロードできます`);
       return;
     }
-
+    const startOrder = images.length;
     // 全画像を一斉にリサイズ処理
-    const resizedFiles = await Promise.all(files.map((file, index) => resizeImage(file, index)));
+    const resizedFiles = await Promise.all(files.map((file, index) => resizeImage(file, startOrder + index)));
+    const newImages = [...images, ...resizedFiles];
     // プレビュー用のURLの配列を生成
-    const newPreviewUrls = resizedFiles.map((file) => URL.createObjectURL(file));
+    const newPreviewUrls = [...previewUrls, ...resizedFiles.map((file) => URL.createObjectURL(file))];
+
+    setImages(newImages);
     // プレビュー用URLの配列をステートへ格納
     setPreviewUrls(newPreviewUrls);
     // リサイズ後の画像ファイルデータを親コンポーネントへ渡す
-    onImagesSelected(resizedFiles);
+    onImagesSelected(newImages);
   };
 
   // ユーザーがダイアログで画像を選択
@@ -128,6 +136,26 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     fileInputRef.current?.click();
   };
 
+  const handleDeleteImage = (id: string) => {
+    const updateImages = images.filter((img) => img.id !== id);
+    const updatePreviewUrls = previewUrls.filter((_, index) => index !== removeImageIndex);
+
+    // 削除する画像のプレビューURLを開放する
+    const removeImageIndex = images.findIndex((img) => img.id === id);
+    if (removeImageIndex !== -1) {
+      URL.revokeObjectURL(previewUrls[removeImageIndex]);
+    }
+
+    updateImages.forEach((img, index) => {
+      img.order = index;
+      img.isMain = index === 0;
+    });
+
+    setImages(updateImages);
+    setPreviewUrls(updatePreviewUrls);
+    onImagesSelected(updateImages);
+  };
+
   return (
     <div className={styles.uploadContainer}>
       {/** ドロップした場合とクリックされた場合のイベントをそれぞれ設定 */}
@@ -140,9 +168,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       <div className={styles.previewContainer}>
         {/** 画像URLをループ処理してプレビュー表示 */}
         {previewUrls.map((url, index) => (
-          <div key={index} className={styles.previewWrapper}>
+          <div key={images[index].id} className={styles.previewWrapper}>
             <img src={url} alt={`プレビュー ${index + 1}`} className={styles.previewImage} />
             {index === 0 && <span className={styles.mainImageBadge}>メイン</span>}
+            <button type="button" className={styles.deleteButton} onClick={() => handleDeleteImage(images[index].id)}>
+              削除
+            </button>
           </div>
         ))}
       </div>

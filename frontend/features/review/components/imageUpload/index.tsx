@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styles from './index.module.scss';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -93,11 +93,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   };
 
   const handleFiles = async (files: File[]) => {
-    // 画像の最大数チェック
+    // アップロードする画像＋アップロード中の画像が最大数を超えているかどうかチェック
     if (images.length + files.length > maxImages) {
       alert(`最大${maxImages}枚までアップロードできます`);
       return;
     }
+    // 新たにアップロードする画像の初期位置設定
     const startOrder = images.length;
     // 全画像を一斉にリサイズ処理
     const resizedFiles = await Promise.all(files.map((file, index) => resizeImage(file, startOrder + index)));
@@ -122,10 +123,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     // ドラッグ時ブラウザでファイルが開くのを無効化
     event.preventDefault();
+    event.stopPropagation();
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    event.stopPropagation();
     // ドロップされたファイルのリストを配列化
     const files = Array.from(event.dataTransfer.files);
     handleFiles(files);
@@ -137,15 +140,19 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   };
 
   const handleDeleteImage = (id: string) => {
+    // 画像データの中から削除する id と一致するデータを探す
+    const removeImageIndex = images.findIndex((img) => img.id === id);
+
+    // 削除したいid と一致しないデータだけ残す
     const updateImages = images.filter((img) => img.id !== id);
+    // プレビューの中から index が removeImageIndex と一致しないものだけ残す
     const updatePreviewUrls = previewUrls.filter((_, index) => index !== removeImageIndex);
 
-    // 削除する画像のプレビューURLを開放する
-    const removeImageIndex = images.findIndex((img) => img.id === id);
+    // 削除するプレビューURLのメモリ解放
     if (removeImageIndex !== -1) {
       URL.revokeObjectURL(previewUrls[removeImageIndex]);
     }
-
+    // 削除後残った画像の order と isMain を再設定
     updateImages.forEach((img, index) => {
       img.order = index;
       img.isMain = index === 0;
@@ -160,11 +167,18 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     <div className={styles.uploadContainer}>
       {/** ドロップした場合とクリックされた場合のイベントをそれぞれ設定 */}
       <div className={styles.dropArea} onDragOver={handleDragOver} onDrop={handleDrop} onClick={triggerFileInput}>
-        <p>クリックまたはドラッグ＆ドロップで画像をアップロード</p>
+        <p>ここをクリックまたはドラッグ＆ドロップで画像をアップロードできます</p>
         <p>（最大{maxImages}枚まで）</p>
       </div>
       {/** 画像ファイル入力フィールド 見えない様に設定 */}
-      <input type="file" accept="image/*" multiple onChange={handleFileChange} ref={fileInputRef} />
+      <input
+        type="file"
+        accept="image/*"
+        multiple
+        onChange={handleFileChange}
+        ref={fileInputRef}
+        className={styles.input}
+      />
       <div className={styles.previewContainer}>
         {/** 画像URLをループ処理してプレビュー表示 */}
         {previewUrls.map((url, index) => (

@@ -13,7 +13,7 @@ interface ImageFile extends File {
   isMain: boolean;
 }
 
-export default function Home() {
+const Home = () => {
   const [selectedImages, setSelectedImages] = useState<ImageFile[]>([]);
 
   const handleImagesSelected = (files: ImageFile[]) => {
@@ -26,9 +26,12 @@ export default function Home() {
         <ReviewTitle />
         <Rating />
         <ProductInfo />
+        {/** 子コンポーネントへ onImagesSelected というpropsを通じて handleImagesSelected 関数を渡している */}
         <ImageUpload onImagesSelected={handleImagesSelected} maxImages={3} maxWidth={1200} maxHeight={1200} />
         <p>選択された画像: {selectedImages.length}枚</p>
       </main>
     </>
   );
-}
+};
+
+export default Home;

@@ -1,14 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import styles from './index.module.scss';
 import { Star } from 'lucide-react';
+import { number } from 'zod';
 
-export const Rating = () => {
+interface RatingProps {
+  onRatingChange: (rating: number) => void;
+}
+
+export const Rating: React.FC<RatingProps> = ({ onRatingChange }) => {
   // 評価点のステート
   const [rating, setRating] = useState(0);
   // 星をhoverした時のステート
   const [hover, setHover] = useState(0);
+
+  const handleRatingClick = (value: number) => {
+    setRating(value);
+    onRatingChange(value);
+  };
 
   return (
     <>
@@ -28,7 +38,7 @@ export const Rating = () => {
                   type="radio"
                   name="rating"
                   value={ratingValue}
-                  onClick={() => setRating(ratingValue)}
+                  onClick={() => handleRatingClick(ratingValue)}
                 />
                 <Star
                   className={styles.starIcon}

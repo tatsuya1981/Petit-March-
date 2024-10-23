@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './index.module.scss';
 import FormSelect from '@/components/elements/formSelect';
 import FormInput from '@/components/elements/formInput';
@@ -13,16 +13,24 @@ interface Option {
   label: string;
 }
 
-const ProductInfo = () => {
+interface ReviewInfo {
+  category: string;
+  productName: string;
+  price: string;
+  purchaseDate: Date | null;
+  brand: string;
+  title: string;
+  content: string;
+}
+
+interface ProductInfoProps {
+  reviewInfo: ReviewInfo;
+  onReviewInfoChange: (info: Partial<ReviewInfo>) => void;
+}
+
+const ProductInfo: React.FC<ProductInfoProps> = ({ reviewInfo, onReviewInfoChange }) => {
   const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
   const [brandOptions, setBrandOptions] = useState<Option[]>([]);
-  const [category, setCategory] = useState('');
-  const [productName, setProductName] = useState('');
-  const [price, setPrice] = useState('');
-  const [purchaseDate, setPurchaseDate] = useState<Date | null>(null);
-  const [brand, setBrand] = useState('');
-  const [reviewTitle, setReviewTitle] = useState('');
-  const [reviewContent, setReviewContent] = useState('');
 
   useEffect(() => {
     const fetchCategoryOptions = async () => {
@@ -55,42 +63,56 @@ const ProductInfo = () => {
     fetchBrandOptions();
   }, []);
 
+  const handleChange = (name: keyof ReviewInfo, value: string | Date | null) => {
+    onReviewInfoChange({ [name]: value });
+  };
+
   return (
     <div className={styles.productContainer}>
       <FormSelect
         label="商品カテゴリ"
         name="category"
         options={categoryOptions}
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
+        value={reviewInfo.category}
+        onChange={(e) => handleChange('category', e.target.value)}
         required
       />
       <FormInput
         label="商品名"
         name="productName"
         type="text"
-        value={productName}
-        onChange={(e) => setProductName(e.target.value)}
+        value={reviewInfo.productName}
+        onChange={(e) => handleChange('productName', e.target.value)}
         required
       />
       <div className={styles.formWrapper}>
-        <FormInput label="価格" name="price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
+        <FormInput
+          label="価格"
+          name="price"
+          type="number"
+          value={reviewInfo.price}
+          onChange={(e) => handleChange('price', e.target.value)}
+        />
         <span className={styles.unit}>円</span>
       </div>
-      <DatePick label="購入日" selected={purchaseDate} onChange={(date) => setPurchaseDate(date)} />
+      <DatePick
+        label="購入日"
+        selected={reviewInfo.purchaseDate}
+        onChange={(date) => handleChange('purchaseDate', date)}
+      />
       <FormSelect
         label="コンビニブランド"
         name="brand"
         options={brandOptions}
-        value={brand}
-        onChange={(e) => setBrand(e.target.value)}
+        value={reviewInfo.brand}
+        onChange={(e) => handleChange('brand', e.target.value)}
         required
       />
       <ReviewContent
-        title={reviewTitle}
-        setTitle={setReviewTitle}
-        content={reviewContent}
-        setContent={setReviewContent}
+        title={reviewInfo.title}
+        setTitle={(value) => handleChange('title', value)}
+        content={reviewInfo.content}
+        setContent={(value) => handleChange('content', value)}
       />
     </div>
   );

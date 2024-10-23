@@ -11,3 +11,41 @@
     padding: 3rem 2rem 0 2rem;
   }
 }
+
+.imageText {
+  margin-bottom: 2rem;
+}
+
+.storeSection {
+  width: 80%;
+  margin-bottom: 2rem;
+
+  h3 {
+    margin-bottom: 0.8rem;
+    font-size: clamp(1rem, 1.2rem, 1.5rem);
+    font-weight: 600;
+  }
+}
+
+.storeSelectMessage {
+  margin-bottom: 2rem;
+}
+
+.map {
+  border: 2px solid rgba(var(--color-border-primary));
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: white;
+}
+
+.mapArea {
+  margin-bottom: 1rem;
+}
+
+.storeName {
+  margin-bottom: 0.5rem;
+}
+
+.address {
+  margin-bottom: 0.5rem;
+}

@@ -1,15 +1,31 @@
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import React, { useEffect, useState } from 'react';
+import { boolean } from 'zod';
 
 interface MapProps {
   initialLocation?: { lat: number; lng: number } | null;
-  onStoreSelect: (storeInfo: { lat: number; lng: number; address: string; storeName?: string }) => void;
+  onStoreSelect: (storeInfo: {
+    lat: number;
+    lng: number;
+    address: string;
+    prefecture: string;
+    city: string;
+    streetAddress1: string;
+    streetAddress2?: string;
+    zip: string;
+    storeName?: string;
+  }) => void;
 }
 
 interface LocationInfo {
   lat: number;
   lng: number;
   address: string;
+  prefecture: string;
+  city: string;
+  streetAddress1: string;
+  streetAddress2?: string;
+  zip: string;
   storeName?: string;
 }
 
@@ -30,25 +46,75 @@ const Map: React.FC<MapProps> = ({ initialLocation, onStoreSelect }) => {
   useEffect(() => {
     // 既存mapデータがあればそのデータを状態へ反映＆変更があればその値へ変更
     if (initialLocation) {
+      // 既存mapデータの緯度・経度をgetAddressFromLatLngへ渡す
       getAddressFromLatLng(initialLocation.lat, initialLocation.lng);
     }
   }, [initialLocation]);
 
+  // 住所コンポーネントから特定の種類を取得するヘルパー関数
+  const getAddressComponent = (components: google.maps.GeocoderAddressComponent[], type: string): string => {
+    const component = components.find((comp) => comp.types.includes(type));
+    return component ? component.long_name : '';
+  };
+
+  // 住所を構造化するヘルパー関数
+  const parseAddress = (
+    addressComponents: google.maps.GeocoderAddressComponent[],
+  ): {
+    prefecture: string;
+    city: string;
+    streetAddress1: string;
+    streetAddress2: string;
+    zip: string;
+  } => {
+    const prefecture = getAddressComponent(addressComponents, 'administrative_area_level_1');
+    const city =
+      getAddressComponent(addressComponents, 'locality') ||
+      getAddressComponent(addressComponents, 'sublocality_level_1');
+    // 町名・番地
+    const district = getAddressComponent(addressComponents, 'sublocality_level_2');
+    const streetNumber = getAddressComponent(addressComponents, 'sublocality_level_3');
+    const premise = getAddressComponent(addressComponents, 'premise');
+
+    // 町名・番地の結合
+    const streetAddress1 = [district, streetNumber, premise].filter(Boolean).join('');
+    // 建物名
+    const streetAddress2 = getAddressComponent(addressComponents, 'establishment');
+    // 郵便番号をハイフン無しに変換
+    const zip = getAddressComponent(addressComponents, 'postal_code').replace('-', '');
+
+    return {
+      prefecture,
+      city,
+      streetAddress1,
+      streetAddress2,
+      zip,
+    };
+  };
+
   const getAddressFromLatLng = async (lat: number, lng: number) => {
     try {
       const geocoder = new google.maps.Geocoder();
+      // Google Maps Geocodingサービスを利用して緯度・経度から住所を取得
       const response = await geocoder.geocode({
         location: { lat, lng },
       });
+      // Geocoding APIから得られた住所が存在しているかどうか、最初の配列でチェック
       if (response.results[0]) {
+        // 指定された住所を構成する各要素（郵便番号や番地など）を保持する
         const addressComponents = response.results[0].address_components;
+        // 人が読みやすい形式にフォーマット
         const formattedAddress = response.results[0].formatted_address;
-
+        // 住所情報を構造化
+        const addressInfo = parseAddress(addressComponents);
+        // 周辺の施設情報を取得
         const placesService = new google.maps.places.PlacesService(document.createElement('div'));
-
+        // クリックした周辺の指定タイプの施設を検索
         const request = {
           location: { lat, lng },
+          // クリックした半径１００メートル以内でポイントから最も近い施設を検索
           radius: 100,
+          // 検索対象をコンビニに限定
           type: 'convenience_store',
         };
 
@@ -59,6 +125,7 @@ const Map: React.FC<MapProps> = ({ initialLocation, onStoreSelect }) => {
               lat,
               lng,
               address: formattedAddress,
+              ...addressInfo,
               storeName: nearestStore.name,
             };
             setSelectedLocation(locationInfo);
@@ -68,6 +135,7 @@ const Map: React.FC<MapProps> = ({ initialLocation, onStoreSelect }) => {
               lat,
               lng,
               address: formattedAddress,
+              ...addressInfo,
             };
             setSelectedLocation(locationInfo);
             onStoreSelect(locationInfo);

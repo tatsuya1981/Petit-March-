@@ -1,7 +1,7 @@
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import React, { useEffect, useState } from 'react';
-import { boolean } from 'zod';
 
+// コンポーネントの型定義
 interface MapProps {
   initialLocation?: { lat: number; lng: number } | null;
   onStoreSelect: (storeInfo: {
@@ -17,6 +17,7 @@ interface MapProps {
   }) => void;
 }
 
+// マップ上で選択された店舗情報に対する型定義
 interface LocationInfo {
   lat: number;
   lng: number;
@@ -54,6 +55,7 @@ const Map: React.FC<MapProps> = ({ initialLocation, onStoreSelect }) => {
   // 住所コンポーネントから特定の種類を取得するヘルパー関数
   const getAddressComponent = (components: google.maps.GeocoderAddressComponent[], type: string): string => {
     const component = components.find((comp) => comp.types.includes(type));
+    // 見つかった場合は component の long_name（住所情報）を返す
     return component ? component.long_name : '';
   };
 
@@ -67,6 +69,7 @@ const Map: React.FC<MapProps> = ({ initialLocation, onStoreSelect }) => {
     streetAddress2: string;
     zip: string;
   } => {
+    // それぞれ特定タイプの住所情報に分けて取得
     const prefecture = getAddressComponent(addressComponents, 'administrative_area_level_1');
     const city =
       getAddressComponent(addressComponents, 'locality') ||
@@ -118,9 +121,12 @@ const Map: React.FC<MapProps> = ({ initialLocation, onStoreSelect }) => {
           type: 'convenience_store',
         };
 
+        // マップで選択後、周辺の特定施設を表示させる
         placesService.nearbySearch(request, (results, status) => {
+          // 検索が正常に終了した場合、最も近い施設を示す
           if (status === google.maps.places.PlacesServiceStatus.OK && results && results.length > 0) {
             const nearestStore = results[0];
+            // 取得したデータからオブジェクトを生成
             const locationInfo: LocationInfo = {
               lat,
               lng,
@@ -131,6 +137,7 @@ const Map: React.FC<MapProps> = ({ initialLocation, onStoreSelect }) => {
             setSelectedLocation(locationInfo);
             onStoreSelect(locationInfo);
           } else {
+            // 検索結果が見つからなかった場合、ロケーション情報だけ作成
             const locationInfo: LocationInfo = {
               lat,
               lng,

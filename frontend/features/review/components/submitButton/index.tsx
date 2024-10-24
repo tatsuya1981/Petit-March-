@@ -8,7 +8,7 @@ interface ReviewData {
   userId: number;
   productId: number;
   brandId: number;
-  storeId?: number; // storeId を追加
+  storeId?: number;
   rating: number;
   title: string;
   productName: string;
@@ -67,6 +67,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
 
       if (!userId || !productId || !brandId || !rating || !title || !productName || !content) {
         alert('必須項目を入力してください');
+        setIsSubmitting(false);
         return;
       }
 
@@ -83,6 +84,8 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
         content,
       };
 
+      let storeId;
+
       // 店舗情報がある場合は新規作成して紐付け
       if (storeLocation) {
         const storeData = {
@@ -96,20 +99,18 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
           streetAddress2: storeLocation.streetAddress2,
           zip: storeLocation.zip,
         };
-        try {
-          // 店舗情報を先に作成
-          const storeResponse = await axios.post('/api/store', storeData);
-          if (storeResponse.data?.id) {
-            reviewData.storeId = storeResponse.data.id;
-          }
-        } catch (error) {
-          console.error('Error creating store:', error);
-          throw new Error('店舗情報の作成に失敗しました');
+
+        // 店舗作成とレビュー送信を並列で行う
+        const [storeResponse] = await Promise.all([axios.post('/api/store', storeData)]);
+        // 店舗情報が作成成功したらstoreIdを作成
+        if (storeResponse.data?.id) {
+          storeId = storeResponse.data.id;
         }
       }
       // 画像データの追加
       const reviewWithImages = {
         ...reviewData,
+        storeId,
         images: images.map((img) => ({
           order: img.order,
           imageUrl: img.imageUrl,

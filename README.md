@@ -137,10 +137,28 @@
 | <p align="left">トップページをスクロールすると右からカードがスライドしサイトの説明文を表示します。（画像は差し替え予定）<br> 初めてサイトを訪れたユーザーに対してどの様なサイトなのか提示しています<p> |
 <br>
 
-| レビューページ |
+| レビューページ / 星評価 |
 | :---: | 
-| [![Image from Gyazo]()]() |
-| <p align="left"><p> |
+| [![Image from Gyazo](https://i.gyazo.com/caa0dce11ec00ba66359813016d07bc8.gif)](https://i.gyazo.com/caa0dce11ec00ba66359813016d07bc8) |
+| <p align="left">レビューで重要な要素となる評価点は５つ星で採点する方式を採用しています。<br>視覚的にわかりやすく見た目的にも楽しくなる様に表示しています<p> |
+<br>
+
+| レビューページ / カテゴリーとカレンダー選択 |
+| :---: | 
+| [![Image from Gyazo](https://i.gyazo.com/25366a24671ac2c14bfe6875227a7b2b.gif)](https://i.gyazo.com/25366a24671ac2c14bfe6875227a7b2b) |
+| <p align="left">各種項目について商品とブランドはカテゴリから、日付はカレンダーから選択できる様に設定してあります。<br>検索時にはこのカテゴリーから探したいレビューを絞り込めます<p> |
+<br>
+
+| レビューページ / 画像投稿 |
+| :---: | 
+| [![Image from Gyazo](https://i.gyazo.com/d4b8418d484e9672fa814b0a078aa75d.gif)](https://i.gyazo.com/d4b8418d484e9672fa814b0a078aa75d) |
+| <p align="left">画像投稿はドロップ機能でストレス無く一度に投稿できる様にしてあります。<br>またメイン画像は左上にバッジを表示し、右上には削除機能を表示してあります。<p> |
+<br>
+
+| レビューページ / 購入店舗選択 |
+| :---: | 
+| [![Image from Gyazo](https://i.gyazo.com/b62c401da1c93244f7e3e7487d667e31.gif)](https://i.gyazo.com/b62c401da1c93244f7e3e7487d667e31) |
+| <p align="left">購入店舗はGoogleMap APIを利用しマップ上で店舗を選択すると登録される様にしてあります。<br>マップ下部には選択した店舗名と住所を表示してあります<p> |
 <br>
 
 # 技術構成について
@@ -148,9 +166,9 @@
 ## 使用技術
 | カテゴリ | 技術内容 |
 | --- | --- | 
-| サーバーサイド |  |
-| フロントエンド |  |
-| CSSフレームワーク |  |
+| サーバーサイド | node.js・Express・Prisma |
+| フロントエンド | TypeScript・React.18・next.js.14 |
+| CSSフレームワーク | SCSS + CSS Modules |
 | データベースサーバー | PostgreSQL |
 | ファイルサーバー | AWS S3 |
 | アプリケーションサーバー |  |

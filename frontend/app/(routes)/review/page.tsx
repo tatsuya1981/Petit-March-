@@ -29,6 +29,7 @@ interface StoreLocation {
   storeName?: string;
 }
 
+// レビュー情報の型定義
 interface ReviewInfo {
   category: string;
   productName: string;

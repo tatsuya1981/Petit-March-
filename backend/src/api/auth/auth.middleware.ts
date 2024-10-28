@@ -53,7 +53,7 @@ export const validateLoginInput = (req: Request, res: Response, next: NextFuncti
     }
   }
 };
-
+// サインアップ用バリデーション
 export const validateSignupInput = (req: Request, res: Response, next: NextFunction) => {
   try {
     signupSchema.parse(req.body);

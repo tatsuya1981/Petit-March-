@@ -2,6 +2,7 @@ import express from 'express';
 import apiRouters from './api/index';
 import { errorHandler } from './middleware/errorHandler';
 import cors from 'cors';
+import { JWT_SECRET } from './config/jwt';
 
 const app = express();
 const port = 4000;

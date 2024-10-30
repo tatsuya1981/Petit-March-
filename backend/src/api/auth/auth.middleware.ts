@@ -11,6 +11,26 @@ if (!JWT_SECRET) {
 }
 const PEPPER = process.env.MY_PEPPER;
 
+// グローバルスコープに新しい型を追加する宣言
+declare global {
+  // 名前空間（namespace）を使いExpressの型定義を拡張
+  namespace Express {
+    // リクエストオブジェクトに user プロパティを拡張
+    interface User {
+      id: number;
+      email: string;
+      name?: string;
+      googleId?: string | null;
+      isActive?: boolean;
+      generation?: number | null;
+      gender?: string | null;
+    }
+    interface Request {
+      user?: User;
+    }
+  }
+}
+
 // パスワードをハッシュ＋ソルト＋ペッパー化するユーティリティ関数
 export const hashedPassword = async (password: string): Promise<string> => {
   // パスワードにペッパーを追加
@@ -67,6 +87,12 @@ export const validateSignupInput = (req: Request, res: Response, next: NextFunct
   }
 };
 
+// JWTペイロード
+interface JWTPayload {
+  id: number;
+  email: string;
+}
+
 // JWT認証用ミドルウェア
 export const authenticateJWT = (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -80,20 +106,18 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
 
     try {
       // .verify()でJWTの有効性を確認し、トークンをデコード
-      const decoded = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
+      const decoded = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] }) as JWTPayload;
 
       // デコードされたトークンの型チェック
       if (typeof decoded === 'string' || !(decoded as JwtPayload).id) {
         throw new AppError('Invalid token format', 401);
       }
 
-      // デコードされたトークンからユーザー情報を抽出して UserPayload 型にマッピング
-      const userPayload: UserPayload = {
+      // リクエストにデコードされたユーザー情報を代入し次の処理へ
+      req.user = {
         id: decoded.id,
         email: decoded.email,
       };
-      // リクエストにデコードされたユーザー情報を代入し次の処理へ
-      req.user = userPayload;
       next();
     } catch (error) {
       throw new AppError('Invalid or expired token', 401);
@@ -102,19 +126,3 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
     next(error);
   }
 };
-
-// カスタムリクエスト型定義
-interface UserPayload {
-  id: string;
-  email: string;
-}
-// グローバルスコープに新しい型を追加する宣言
-declare global {
-  // 名前空間（namespace）を使いExpressの型定義を拡張
-  namespace Express {
-    // リクエストオブジェクトに user プロパティを拡張
-    interface Request {
-      user?: UserPayload;
-    }
-  }
-}

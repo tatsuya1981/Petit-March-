@@ -87,7 +87,7 @@ export class AuthController {
       if (!userId) {
         throw new AppError('User not authenticated', 401);
       }
-      const user = await AuthModel.findUserById(parseInt(userId));
+      const user = await AuthModel.findUserById(userId);
       res.json({
         message: 'Current user information',
         user,

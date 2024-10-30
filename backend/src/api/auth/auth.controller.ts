@@ -2,48 +2,25 @@
 import { NextFunction, Request, Response } from 'express';
 import prisma from '../../config/database';
 import { JWT_SECRET } from '../../config/jwt';
-import { AppError } from 'middleware/errorHandler';
+import { AppError } from '../../middleware/errorHandler';
 import { hashedPassword, verifyPassword } from './auth.middleware';
 import jwt from 'jsonwebtoken';
+import { AuthModel } from './auth.model';
 
 interface SignupRequestBody {
   email: string;
   password: string;
   name: string;
+  generation?: number;
+  gender?: string;
 }
 
 export class AuthController {
   // サインアップ
   static async signup(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password, name } = req.body as SignupRequestBody;
-      // メールアドレスの重複チェック
-      const existingUser = await prisma.user.findUnique({
-        where: { email },
-      });
-      if (existingUser) {
-        throw new AppError('Email already exists', 400);
-      }
-
-      // パスワードのハッシュ化
-      const passwordHash = await hashedPassword(password);
-
-      // ユーザー作成
-      const user = await prisma.user.create({
-        data: {
-          email,
-          name,
-          passwordDigest: passwordHash,
-          isActive: true,
-        },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          isActive: true,
-          createdAt: true,
-        },
-      });
+      const userData = req.body as SignupRequestBody;
+      const user = await AuthModel.createUser(userData);
 
       // JWTトークンの生成
       const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '24h' });
@@ -61,33 +38,30 @@ export class AuthController {
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
+      const user = await AuthModel.findUserByEmail(email);
 
-      // ユーザー検索
-      const user = await prisma.user.findUnique({
-        where: { email },
-      });
-      if (!user || !user.isActive) {
-        throw new AppError('Invalid credentials', 401);
+      if (!user.isActive) {
+        throw new AppError('Account is inactive', 401);
       }
+
       // パスワードの検証
       const isValidPassword = await verifyPassword(password, user.passwordDigest);
       if (!isValidPassword) {
         throw new AppError('Invalid credentials', 401);
       }
-
       // 最終ログイン日時の更新
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { lastLoginAt: new Date() },
-      });
+      await AuthModel.updateLastLogin(user.id);
 
       // JWTトークンの生成
       const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '24h' });
       res.json({
         message: 'Login successful',
         user: {
+          id: user.id,
           email: user.email,
           name: user.name,
+          generation: user.generation,
+          gender: user.gender,
           isActive: user.isActive,
         },
         token,
@@ -96,6 +70,7 @@ export class AuthController {
       next(error);
     }
   }
+
   // ログアウト
   static async logout(req: Request, res: Response, next: NextFunction) {
     try {
@@ -104,6 +79,7 @@ export class AuthController {
       next(error);
     }
   }
+
   // 現在のユーザー情報取得
   static async getCurrentUser(req: Request, res: Response, next: NextFunction) {
     try {
@@ -111,19 +87,7 @@ export class AuthController {
       if (!userId) {
         throw new AppError('User not authenticated', 401);
       }
-      const user = await prisma.user.findUnique({
-        where: { id: parseInt(userId) },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-          isActive: true,
-          lastLoginAt: true,
-        },
-      });
-      if (!user) {
-        throw new AppError('User not found', 404);
-      }
+      const user = await AuthModel.findUserById(parseInt(userId));
       res.json({
         message: 'Current user information',
         user,

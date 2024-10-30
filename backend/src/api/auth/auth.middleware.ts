@@ -1,7 +1,7 @@
 import bcryptjs from 'bcryptjs';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import { AppError } from 'middleware/errorHandler';
+import { AppError } from '../../middleware/errorHandler';
 import { z } from 'zod';
 
 // 環境変数を取得
@@ -75,22 +75,24 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
     if (!authHeader) {
       throw new AppError('Authentication token is missing', 401);
     }
+    // "Bearer <token>"の形式から空白で区切りトークン部分だけ取得
     const token = authHeader.split(' ')[1];
 
     try {
+      // .verify()でJWTの有効性を確認し、トークンをデコード
       const decoded = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
 
-      // 型チェックを行い、必要な情報だけを抽出する
+      // デコードされたトークンの型チェック
       if (typeof decoded === 'string' || !(decoded as JwtPayload).id) {
         throw new AppError('Invalid token format', 401);
       }
 
-      // ユーザー情報を UserPayload 型にマッピング
+      // デコードされたトークンからユーザー情報を抽出して UserPayload 型にマッピング
       const userPayload: UserPayload = {
         id: decoded.id,
         email: decoded.email,
       };
-
+      // リクエストにデコードされたユーザー情報を代入し次の処理へ
       req.user = userPayload;
       next();
     } catch (error) {
@@ -106,8 +108,11 @@ interface UserPayload {
   id: string;
   email: string;
 }
+// グローバルスコープに新しい型を追加する宣言
 declare global {
+  // 名前空間（namespace）を使いExpressの型定義を拡張
   namespace Express {
+    // リクエストオブジェクトに user プロパティを拡張
     interface Request {
       user?: UserPayload;
     }

@@ -6,6 +6,7 @@ import { AppError } from '../../middleware/errorHandler';
 import { hashedPassword } from './auth.middleware';
 
 export class AuthModel {
+  // ユーザー作成メソッド
   static async createUser(userData: {
     email: string;
     password: string;
@@ -23,7 +24,7 @@ export class AuthModel {
     // パスワードのハッシュ化
     const passwordHash = await hashedPassword(userData.password);
 
-    // ユーザー作成
+    // ユーザー作成処理
     return prisma.user.create({
       data: {
         email: userData.email,
@@ -39,7 +40,6 @@ export class AuthModel {
         name: true,
         generation: true,
         gender: true,
-        isActive: true,
         createdAt: true,
       },
     });
@@ -56,16 +56,13 @@ export class AuthModel {
     return user;
   }
 
-  // 最終ログイン時間の更新
-  static async updateLastLogin(userId: number) {
-    return prisma.user.update({
-      where: { id: userId },
-      data: { lastLoginAt: new Date() },
-    });
-  }
-
   // ユーザー検索(userId)
   static async findUserById(userId: number) {
+    // idの数値型を検証
+    if (isNaN(userId)) {
+      throw new Error('Invalid ID');
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -74,7 +71,6 @@ export class AuthModel {
         name: true,
         generation: true,
         gender: true,
-        isActive: true,
         lastLoginAt: true,
       },
     });
@@ -83,4 +79,23 @@ export class AuthModel {
     }
     return user;
   }
+
+  // 最終ログイン時間の更新
+  static async updateLastLogin(userId: number) {
+    return prisma.user.update({
+      where: { id: userId },
+      data: { lastLoginAt: new Date() },
+    });
+  }
+
+  // ユーザーデータのユニーク判定
+  static uniqueness = async (email: string, name?: string): Promise<boolean> => {
+    const search = await prisma.user.findFirst({
+      where: {
+        OR: [{ name }, { email }],
+      },
+    });
+    // searchが見つけられない（ユニーク）ならtrue、そうでなければfalseを返す
+    return !search;
+  };
 }

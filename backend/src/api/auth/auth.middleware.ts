@@ -113,7 +113,7 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
         throw new AppError('Invalid token format', 401);
       }
 
-      // リクエストにデコードされたユーザー情報を代入し次の処理へ
+      // デコードされたユーザー情報をリクエストへ代入し次の処理へ
       req.user = {
         id: decoded.id,
         email: decoded.email,

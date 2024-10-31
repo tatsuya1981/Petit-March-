@@ -2,7 +2,8 @@ import express from 'express';
 import apiRouters from './api/index';
 import { errorHandler } from './middleware/errorHandler';
 import cors from 'cors';
-import { JWT_SECRET } from './config/jwt';
+import session from 'express-session';
+import passport from 'passport';
 
 const app = express();
 const port = 4000;
@@ -18,6 +19,22 @@ app.use(
   }),
 );
 
+// セッション管理
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      // 24時間
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  }),
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.json());
 app.use('/api', apiRouters);
 

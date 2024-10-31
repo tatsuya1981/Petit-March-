@@ -49,7 +49,17 @@ passport.use(
             data: { googleId: profile.id },
           });
         }
-        return done(null, user);
+        const userForPassport: Express.User = {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          googleId: user.googleId,
+          isActive: user.isActive,
+          generation: user.generation,
+          gender: user.gender,
+        };
+
+        return done(null, userForPassport);
       } catch (error) {
         return done(error);
       }

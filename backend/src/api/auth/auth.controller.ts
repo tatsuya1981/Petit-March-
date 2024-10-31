@@ -18,8 +18,14 @@ interface SignupRequestBody {
 export class AuthController {
   // サインアップ
   static async signup(req: Request, res: Response, next: NextFunction) {
+    const userData = req.body as SignupRequestBody;
     try {
-      const userData = req.body as SignupRequestBody;
+      // ユーザーデータのユニーク判定
+      const isUnique = await AuthModel.uniqueness(userData.email, userData.name);
+      if (!isUnique) {
+        return next(new AppError('Name and email address are already in use', 400));
+      }
+      // モデルへデータを渡しサインアップ処理
       const user = await AuthModel.createUser(userData);
 
       // JWTトークンの生成
@@ -95,5 +101,16 @@ export class AuthController {
     } catch (error) {
       next(error);
     }
+  }
+
+  static async googleAuthCallback(req: Request, res: Response) {
+    if (!req.user) {
+      return res.redirect(`${process.env.FRONTEND_URL}/login?error=auth_failed`);
+    }
+
+    const user = req.user as Express.User;
+    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { algorithm: 'HS256', expiresIn: '24h' });
+    // フロントエンドにリダイレクト（トークン付き）
+    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${token}`);
   }
 }

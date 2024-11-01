@@ -6,7 +6,7 @@ import session from 'express-session';
 import passport from 'passport';
 
 const app = express();
-const port = 4000;
+const port = process.env.PORT;
 
 app.get('/', (req, res) => {
   res.json({ message: 'ok' });

@@ -7,6 +7,11 @@ declare global {
       // セッション関連
       SESSION_SECRET: string;
 
+      // DB関連
+      POSTGRES_DB: string;
+      POSTGRES_USER: string;
+      POSTGRES_PASSWORD: string;
+
       // Google OAuth関連
       GOOGLE_CLIENT_ID: string;
       GOOGLE_CLIENT_SECRET: string;
@@ -22,4 +27,5 @@ declare global {
   }
 }
 
+// モジュールとして扱うために空のexportを作成
 export {};

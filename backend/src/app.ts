@@ -4,9 +4,13 @@ import { errorHandler } from './middleware/errorHandler';
 import cors from 'cors';
 import session from 'express-session';
 import passport from 'passport';
+import { validateEnv } from '../src/utils/validateEnv';
+
+// 環境変数のバリデーション
+const env = validateEnv();
 
 const app = express();
-const port = process.env.PORT;
+const port = env.PORT;
 
 app.get('/', (req, res) => {
   res.json({ message: 'ok' });
@@ -22,7 +26,7 @@ app.use(
 // セッション管理
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || 'secret-key',
+    secret: env.SESSION_SECRET || 'secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: {

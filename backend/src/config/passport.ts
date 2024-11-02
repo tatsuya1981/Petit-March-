@@ -12,7 +12,9 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
+      // 認証成功時ユーザーをこのURLへリダイレクトさせる
       callbackURL: `${BACKEND_URL}/api/auth/google/callback`,
+      // trueでコールバック関数にリクエストオブジェクトが渡される
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {

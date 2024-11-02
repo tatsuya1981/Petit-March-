@@ -12,7 +12,9 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
+      // 認証成功時ユーザーをこのURLへリダイレクトさせる
       callbackURL: `${BACKEND_URL}/api/auth/google/callback`,
+      // trueでコールバック関数にリクエストオブジェクトが渡される
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {
@@ -30,6 +32,7 @@ passport.use(
 
         // 新規ユーザーを作成
         if (!user) {
+          // google認証のためにパスワードを生成
           const randomPassword = Math.random().toString(36).slice(-8);
           const passwordHash = await hashedPassword(randomPassword);
 
@@ -49,6 +52,7 @@ passport.use(
             data: { googleId: profile.id },
           });
         }
+        // データを整えpassport.jsへ渡す
         const userForPassport: Express.User = {
           id: user.id,
           email: user.email,
@@ -58,7 +62,7 @@ passport.use(
           generation: user.generation,
           gender: user.gender,
         };
-
+        // passportへ処理完了を通知しuserForPassportをセッションへ保存
         return done(null, userForPassport);
       } catch (error) {
         return done(error);
@@ -67,10 +71,12 @@ passport.use(
   ),
 );
 
+// 認証されたユーザーデータをセッションに保存
 passport.serializeUser((user: Express.User, done) => {
   done(null, user.id);
 });
 
+// セッションに保存されたidからユーザーオブジェクトを再生成
 passport.deserializeUser(async (id: number, done) => {
   try {
     const user = await prisma.user.findUnique({
@@ -79,6 +85,7 @@ passport.deserializeUser(async (id: number, done) => {
     if (!user) {
       return done(new Error('User not found'));
     }
+    // データを整えpassport.jsへ渡す
     const userForPassport: Express.User = {
       id: user.id,
       email: user.email,

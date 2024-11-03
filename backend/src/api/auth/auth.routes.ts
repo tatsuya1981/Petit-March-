@@ -8,9 +8,9 @@ import passport from 'passport';
 const router = express.Router();
 
 // 認証が不要なパブリックルート
-router.post('/signup', validateSignupInput, AuthController.signup);
-router.post('/login', validateLoginInput, AuthController.login);
-router.post('/logout', AuthController.logout);
+router.post('/sign-up', validateSignupInput, AuthController.signUp);
+router.post('/log-in', validateLoginInput, AuthController.logIn);
+router.post('/log-out', AuthController.logOut);
 
 // プライベートルート
 router.get('/me', authenticateJWT, AuthController.getCurrentUser);

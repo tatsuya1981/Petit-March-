@@ -1,9 +1,8 @@
 // HTTPレスポンスとリクエストの処理を記述
-import { NextFunction, Request, Response } from 'express';
-import prisma from '../../config/database';
+import e, { NextFunction, Request, Response } from 'express';
 import { JWT_SECRET } from '../../config/jwt';
 import { AppError } from '../../middleware/errorHandler';
-import { hashedPassword, verifyPassword } from './auth.middleware';
+import { verifyPassword } from './auth.middleware';
 import jwt from 'jsonwebtoken';
 import { AuthModel } from './auth.model';
 
@@ -17,7 +16,7 @@ interface SignupRequestBody {
 
 export class AuthController {
   // サインアップ
-  static async signup(req: Request, res: Response, next: NextFunction) {
+  static async signUp(req: Request, res: Response, next: NextFunction) {
     const userData = req.body as SignupRequestBody;
     try {
       // ユーザーデータのユニーク判定
@@ -41,7 +40,7 @@ export class AuthController {
   }
 
   // ログイン
-  static async login(req: Request, res: Response, next: NextFunction) {
+  static async logIn(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
       const user = await AuthModel.findUserByEmail(email);
@@ -78,9 +77,21 @@ export class AuthController {
   }
 
   // ログアウト
-  static async logout(req: Request, res: Response, next: NextFunction) {
+  static async logOut(req: Request, res: Response, next: NextFunction) {
     try {
-      res.json({ message: 'Logged out successfully' });
+      // Passportセッションのクリア
+      req.logout((err) => {
+        if (err) return next(err);
+
+        // セッションの破棄
+        req.session.destroy((err) => {
+          if (err) return next(err);
+
+          // Cookieのクリア
+          res.clearCookie('sessionId');
+          res.json({ message: 'Logged out successfully' });
+        });
+      });
     } catch (error) {
       next(error);
     }
@@ -103,6 +114,7 @@ export class AuthController {
     }
   }
 
+  // Google 認証後のコールバック処理
   static async googleAuthCallback(req: Request, res: Response) {
     if (!req.user) {
       return res.redirect(`${process.env.FRONTEND_URL}/login?error=auth_failed`);

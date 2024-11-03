@@ -3,30 +3,35 @@ import apiRouters from './api/index';
 import { errorHandler } from './middleware/errorHandler';
 import cors from 'cors';
 import session from 'express-session';
-import passport from 'passport';
 import { validateEnv } from '../src/utils/validateEnv';
+import passport from './config/passport';
 
 // 環境変数のバリデーション
 const env = validateEnv();
 
 const app = express();
+// 検証済みの環境変数envを使用
 const port = env.PORT;
+
+// cors の設定
+const corsOptions = {
+  origin: env.FRONTEND_URL,
+  credentials: true,
+  methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['set-cookie'],
+};
+
+app.use(cors(corsOptions));
 
 app.get('/', (req, res) => {
   res.json({ message: 'ok' });
 });
 
-// cors の設定
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-  }),
-);
-
 // セッション管理
 app.use(
   session({
-    secret: env.SESSION_SECRET || 'secret-key',
+    secret: env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {

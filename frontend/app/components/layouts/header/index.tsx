@@ -13,7 +13,7 @@ const Header = () => {
           </Link>
         </div>
         <nav className={styles.nav}>
-          <Link href="" className={styles.link}>
+          <Link href="/sign-up" className={styles.link}>
             新規登録
           </Link>
           <Link href="" className={styles.link}>

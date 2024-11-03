@@ -30,7 +30,7 @@ const Catchphrase = () => {
             <p className={styles.wordBlocks}>みんなで共有してみませんか</p>
           </span>
         </h1>
-        <Link href="" className={styles.link}>
+        <Link href="/sign-up" className={styles.link}>
           <button className={styles.button}>新規登録でレビュー！</button>
         </Link>
       </div>

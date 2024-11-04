@@ -49,13 +49,13 @@ export const SignUpForm = () => {
     { value: '60', label: '５０代後半' },
     { value: '65', label: '６０代前半' },
     { value: '70', label: '６０代後半' },
-    { value: '', label: '７０歳以上' },
+    { value: '75', label: '７０歳以上' },
   ];
 
   const genderOptions = [
     { value: 'male', label: '男性' },
     { value: 'female', label: '女性' },
-    { value: '', label: '秘密' },
+    { value: 'secret', label: '秘密' },
   ];
 
   const onSubmit = async (data: SignUpFormInputs) => {

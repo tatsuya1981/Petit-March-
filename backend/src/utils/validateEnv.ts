@@ -1,4 +1,24 @@
-export const validateEnv = () => {
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+export interface ValidatedEnv {
+  PORT: string;
+  NODE_ENV: 'development' | 'production' | 'test';
+  POSTGRES_DB: string;
+  POSTGRES_USER: string;
+  POSTGRES_PASSWORD: string;
+  DATABASE_URL: string;
+  MY_PEPPER: string;
+  JWT_SECRET: string;
+  GOOGLE_CLIENT_ID: string;
+  GOOGLE_CLIENT_SECRET: string;
+  BACKEND_URL: string;
+  FRONTEND_URL: string;
+  SESSION_SECRET: string;
+}
+// バリデーション関数
+const validateEnv = () => {
   const requiredEnvVars = [
     'PORT',
     'NODE_ENV',
@@ -13,7 +33,7 @@ export const validateEnv = () => {
     'BACKEND_URL',
     'FRONTEND_URL',
     'SESSION_SECRET',
-  ];
+  ] as const; //読み取り専用
 
   // 必須環境変数のチェック
   for (const envVar of requiredEnvVars) {
@@ -29,8 +49,8 @@ export const validateEnv = () => {
   }
 
   // 型ガード: このチェックを通過した後は、必須の環境変数が全て存在することが保証される
-  const validatedEnv = {
-    PORT: process.env.PORT,
+  const validatedEnv: ValidatedEnv = {
+    PORT: process.env.PORT!,
     NODE_ENV: nodeEnv as 'development' | 'production' | 'test',
     POSTGRES_DB: process.env.POSTGRES_DB!,
     POSTGRES_USER: process.env.POSTGRES_USER!,
@@ -43,7 +63,9 @@ export const validateEnv = () => {
     BACKEND_URL: process.env.BACKEND_URL!,
     FRONTEND_URL: process.env.FRONTEND_URL!,
     SESSION_SECRET: process.env.SESSION_SECRET!,
-  } as const;
+  };
 
   return validatedEnv;
 };
+
+export const env = validateEnv();

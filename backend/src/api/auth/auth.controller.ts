@@ -77,24 +77,8 @@ export class AuthController {
   }
 
   // ログアウト
-  static async logOut(req: Request, res: Response, next: NextFunction) {
-    try {
-      // Passportセッションのクリア
-      req.logout((err) => {
-        if (err) return next(err);
-
-        // セッションの破棄
-        req.session.destroy((err) => {
-          if (err) return next(err);
-
-          // Cookieのクリア
-          res.clearCookie('sessionId');
-          res.json({ message: 'Logged out successfully' });
-        });
-      });
-    } catch (error) {
-      next(error);
-    }
+  static logOut(req: Request, res: Response) {
+    res.json({ message: 'Logged out successfully' });
   }
 
   // 現在のユーザー情報取得

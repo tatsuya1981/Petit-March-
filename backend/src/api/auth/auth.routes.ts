@@ -4,6 +4,8 @@ import express from 'express';
 import { authenticateJWT, validateLoginInput, validateSignupInput } from './auth.middleware';
 import { AuthController } from './auth.controller';
 import passport from 'passport';
+import { env } from '../../utils/validateEnv';
+import { User } from '../../config/passport';
 
 const router = express.Router();
 
@@ -20,7 +22,8 @@ router.get(
   '/google',
   passport.authenticate('google', {
     scope: ['profile', 'email'],
-    session: true,
+    // セッションを使用しない
+    session: false,
   }),
 );
 
@@ -29,14 +32,21 @@ router.get(
   '/google/callback',
   passport.authenticate('google', {
     failureRedirect: `${process.env.FRONTEND_URL}/login`,
-    session: true,
+    session: false,
   }),
-  AuthController.googleAuthCallback,
-);
+  (req, res) => {
+    const user = req.user as User;
 
-// セッション確認用ルート
-router.get('/session', (req, res) => {
-  res.json({ user: req.user || null });
-});
+    // フロントエンドにリダイレクトする際、トークンをクエリパラメータとして付与
+    res.redirect(
+      `${env.FRONTEND_URL}/auth/callback?` +
+        `token=${user.token}&` +
+        `userId=${user.id}&` +
+        // encodeURIComponent関数でURLエンコードにして送信
+        `email=${encodeURIComponent(user.email)}&` +
+        `name=${encodeURIComponent(user.name)}`,
+    );
+  },
+);
 
 export default router;

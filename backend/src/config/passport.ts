@@ -2,10 +2,41 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import prisma from './database';
 import { hashedPassword } from '../api/auth/auth.middleware';
+import { env } from '../utils/validateEnv';
+import jwt from 'jsonwebtoken';
+import { AppError } from '../middleware/errorHandler';
 
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:4000';
+const GOOGLE_CLIENT_ID = env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = env.GOOGLE_CLIENT_SECRET;
+const BACKEND_URL = env.BACKEND_URL;
+const JWT_SECRET = env.JWT_SECRET;
+
+// JWTペイロードの型定義
+interface JWTPayload {
+  id: number;
+  email: string;
+  name: string;
+}
+
+export interface User {
+  id: number;
+  email: string;
+  name: string;
+  isActive: boolean;
+  generation?: number | null;
+  gender?: string | null;
+  token: string;
+}
+
+// トークン生成
+const generateToken = (payload: JWTPayload): string => {
+  return jwt.sign(payload, JWT_SECRET, {
+    // 有効期限
+    expiresIn: '24h',
+    // アルゴリズムの指定
+    algorithm: 'HS256',
+  });
+};
 
 passport.use(
   new GoogleStrategy(
@@ -23,82 +54,54 @@ passport.use(
         const email = profile.emails?.[0]?.value;
 
         if (!email) {
-          return done(new Error('No email found in Google profile'));
+          return done(new AppError('No email found in Google profile', 400));
         }
-        // 既存ユーザーの検索
-        let user = await prisma.user.findUnique({
-          where: { email },
+
+        // ユーザー取得または作成
+        const user = await prisma.user.upsert({
+          where: {
+            email,
+          },
+          update: {
+            googleId: profile.id,
+            lastLoginAt: new Date(),
+          },
+          create: {
+            email,
+            name: profile.displayName || email.split('@')[0],
+            passwordDigest: await hashedPassword(Math.random().toString(36).slice(-8)),
+            googleId: profile.id,
+            isActive: true,
+            lastLoginAt: new Date(),
+          },
         });
 
-        // 新規ユーザーを作成
-        if (!user) {
-          // google認証のためにパスワードを生成
-          const randomPassword = Math.random().toString(36).slice(-8);
-          const passwordHash = await hashedPassword(randomPassword);
-
-          user = await prisma.user.create({
-            data: {
-              email,
-              name: profile.displayName || email.split('@')[0],
-              passwordDigest: passwordHash,
-              googleId: profile.id,
-              isActive: true,
-            },
-          });
-        } else if (!user.googleId) {
-          // 既存ユーザーにgoogleIDを紐づける
-          user = await prisma.user.update({
-            where: { id: user.id },
-            data: { googleId: profile.id },
-          });
-        }
-        // データを整えpassport.jsへ渡す
-        const userForPassport: Express.User = {
+        // JWTペイロードの作成
+        const payload: JWTPayload = {
           id: user.id,
           email: user.email,
           name: user.name,
-          googleId: user.googleId,
+        };
+        // JWTトークンを生成
+        const token = generateToken(payload);
+
+        // Passportが期待する形式のUserオブジェクトを作成
+        const userResponse: User = {
+          id: user.id,
+          email: user.email,
+          name: user.name,
           isActive: user.isActive,
           generation: user.generation,
           gender: user.gender,
+          token: token,
         };
-        // passportへ処理完了を通知しuserForPassportをセッションへ保存
-        return done(null, userForPassport);
+
+        return done(null, userResponse);
       } catch (error) {
         return done(error);
       }
     },
   ),
 );
-
-// 認証されたユーザーデータをセッションに保存
-passport.serializeUser((user: Express.User, done) => {
-  done(null, user.id);
-});
-
-// セッションに保存されたidからユーザーオブジェクトを再生成
-passport.deserializeUser(async (id: number, done) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id },
-    });
-    if (!user) {
-      return done(new Error('User not found'));
-    }
-    // データを整えpassport.jsへ渡す
-    const userForPassport: Express.User = {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      googleId: user.googleId,
-      isActive: user.isActive,
-      generation: user.generation,
-      gender: user.gender,
-    };
-    done(null, userForPassport);
-  } catch (error) {
-    done(error);
-  }
-});
 
 export default passport;

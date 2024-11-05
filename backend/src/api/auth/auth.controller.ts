@@ -1,5 +1,5 @@
 // HTTPレスポンスとリクエストの処理を記述
-import e, { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { JWT_SECRET } from '../../config/jwt';
 import { AppError } from '../../middleware/errorHandler';
 import { verifyPassword } from './auth.middleware';

@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
+import FormInput from '@/components/elements/formInput';
 
 const signUpSchema = z
   .object({
@@ -77,7 +78,9 @@ export const SignUpForm = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}></form>
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+        <FormInput label="名前" required {...register('name')} error={errors.name?.message} />
+      </form>
     </>
   );
 };

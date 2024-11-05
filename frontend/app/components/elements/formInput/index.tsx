@@ -10,6 +10,7 @@ interface FormInputProps {
   // 入力が必須かどうか
   required?: boolean;
   placeholder?: string;
+  error?: string;
 }
 
 const FormInput: React.FC<FormInputProps> = ({ label, name, type, value, onChange, required = false, placeholder }) => {

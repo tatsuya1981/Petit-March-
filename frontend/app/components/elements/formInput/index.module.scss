@@ -21,3 +21,8 @@
 .required {
   color: rgba(var(--color-text-red));
 }
+
+.errorMessage {
+  color: rgb(var(--color-text-red));
+  font-size: 0.75rem;
+}

@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import styles from './index.module.scss';
 
-// React.InputHTMLAttributesから name プロパティを除外して、独自プロパティを追加
+// React.InputHTMLAttributesから name プロパティを除外して、独自プロパティとして追加
 interface FormInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'name'> {
   label: string;
   name: string;
@@ -10,8 +10,8 @@ interface FormInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement
   error?: string;
 }
 
-const FormInput: React.FC<FormInputProps> = forwardRef<HTMLInputElement, FormInputProps>(
-  ({ label, name, type, value, error, onChange, required = false, placeholder, ...props }, ref) => {
+const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
+  ({ label, name, error, className, required = false, ...props }, ref) => {
     return (
       <div className={styles.form}>
         <label htmlFor={name} className={styles.label}>
@@ -21,17 +21,17 @@ const FormInput: React.FC<FormInputProps> = forwardRef<HTMLInputElement, FormInp
         </label>
         <input
           ref={ref}
-          className={styles.input}
+          className={`${styles.input} ${error ? styles.inputError : ''} ${className || ''}`}
           id={name}
           name={name}
-          type={type}
-          value={value}
-          onChange={onChange}
-          required={required}
-          placeholder={placeholder}
+          aria-invalid={!!error}
           {...props}
         />
-        {error && <p className={styles.errorMessage}>{error}</p>}
+        {error && (
+          <p className={styles.errorMessage} role="alert">
+            {error}
+          </p>
+        )}
       </div>
     );
   },

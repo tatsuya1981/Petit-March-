@@ -32,7 +32,9 @@ type SignUpFormInputs = z.infer<typeof signUpSchema>;
 
 export const SignUpForm = () => {
   const router = useRouter();
+  // エラーを保存するための状態管理
   const [submitError, setSubmitError] = useState<string | null>(null);
+  // フォーム送信の状態管理 true の場合は送信ボタン無効化
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -70,7 +72,9 @@ export const SignUpForm = () => {
   ];
 
   const onSubmit = async (data: SignUpFormInputs) => {
+    // 送信前にエラー状態をクリア
     setSubmitError(null);
+    // 送信開始時に送信中フラグをtrueにする
     setIsSubmitting(true);
     try {
       // フォームの入力データを送信
@@ -86,6 +90,7 @@ export const SignUpForm = () => {
       }
       console.error('Error:', error);
     } finally {
+      // 処理完了後送信中フラグをfalseにする
       setIsSubmitting(false);
     }
   };

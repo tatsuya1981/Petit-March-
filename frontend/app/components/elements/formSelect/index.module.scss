@@ -20,3 +20,18 @@
 .required {
   color: rgba(var(--color-text-red));
 }
+
+.select {
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: rgb(var(--color-border-focus));
+    box-shadow: 0 0 0 1px rgb(var(--color-border-focus));
+  }
+}
+
+.errorMessage {
+  color: rgb(var(--color-text-red));
+  margin-top: 0.25rem;
+}

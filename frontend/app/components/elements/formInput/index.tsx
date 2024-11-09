@@ -9,8 +9,8 @@ interface FormInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement
   required?: boolean;
   error?: string;
 }
-
 const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
+  // refを渡し親コンポーネントからアクセスできるようにする
   ({ label, name, error, className, required = false, ...props }, ref) => {
     return (
       <div className={styles.form}>
@@ -37,6 +37,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
   },
 );
 
+// React開発者ツールでコンポーネントの名前が匿名になるのを防止
 FormInput.displayName = 'FormInput';
 
 export default FormInput;

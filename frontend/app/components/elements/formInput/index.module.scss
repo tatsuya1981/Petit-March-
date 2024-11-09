@@ -19,10 +19,25 @@
 }
 
 .required {
-  color: rgba(var(--color-text-red));
+  color: rgb(var(--color-text-red));
 }
 
 .errorMessage {
   color: rgb(var(--color-text-red));
   font-size: 0.75rem;
+}
+
+.input {
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: rgb(var(--color-border-focus));
+    box-shadow: 0 0 0 2px rgb(var(--color-border-focus));
+  }
+}
+
+.errorMessage {
+  color: rgb(var(--color-text-red));
+  margin-top: 0.25rem;
 }

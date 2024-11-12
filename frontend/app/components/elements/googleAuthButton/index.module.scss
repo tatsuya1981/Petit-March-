@@ -1,0 +1,44 @@
+@use '../../../../app/styles/mixins.scss' as mx;
+
+.googleButton {
+  width: 80%;
+  max-width: 480px;
+  padding: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 12px 12px 10px 1px rgba(86, 138, 227, 0.4);
+  background: white;
+  transition: background-color 0.2s;
+  &:hover {
+    background-color: #e3edf7;
+  }
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.googleButtonContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  @include mx.min('sm') {
+    gap: 1rem;
+  }
+  span {
+    font-size: clamp(1rem, 1.2rem, 1.5rem);
+    @include mx.min('sm') {
+      font-size: clamp(0.6rem, 0.7rem, 0.8rem);
+    }
+  }
+}
+
+.googleIcon {
+  width: 3rem;
+  height: 3rem;
+  @include mx.min('sm') {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}

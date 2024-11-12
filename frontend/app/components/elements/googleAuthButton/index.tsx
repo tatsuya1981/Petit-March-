@@ -8,7 +8,7 @@ interface GoogleAuthButtonProps {
   className?: string;
 }
 
-export const GoogleAuthButton = ({ className }: GoogleAuthButtonProps) => {
+export default function GoogleAuthButton({ className }: GoogleAuthButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -44,8 +44,8 @@ export const GoogleAuthButton = ({ className }: GoogleAuthButtonProps) => {
             fill="#EA4335"
           />
         </svg>
-        <span> {isLoading ? 'Loading...' : 'Continue with Google'} </span>
+        <span> {isLoading ? 'Loading...' : 'Googleアカウントでログイン'} </span>
       </div>
     </button>
   );
-};
+}

@@ -1,1 +1,43 @@
 @use '../../styles/mixins.scss' as mx;
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  text-align: center;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.message {
+  color: #666;
+}
+
+.loadingSpinner {
+  margin-top: 1rem;
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  // １秒で一定速度で回転するアニメーションを無限に繰り返す
+  animation: spin 1s linear infinite;
+}
+
+// spinアニメーションの設定 ０度から始まって１回転する
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

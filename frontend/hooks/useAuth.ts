@@ -9,6 +9,7 @@ export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const logout = useCallback(async () => {
+    // ログアウト処理中へ状態変更
     setIsLoading(true);
     try {
       await axios.post(
@@ -16,6 +17,7 @@ export const useAuth = () => {
         // 空のリクエストボディ
         {},
         {
+          // バックエンド側でログアウトリクエスト認証を受け付ける特に使用される
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },

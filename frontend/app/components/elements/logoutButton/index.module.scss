@@ -1,0 +1,19 @@
+@use '../../../../app/styles/mixins.scss' as mx;
+
+.logoutButton {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background-color: rgb(var(--color-bg-primary));
+  color: rgb(var(--color-text-dark-brown));
+  font-size: 0.875rem;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: white;
+    opacity: 0.7;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

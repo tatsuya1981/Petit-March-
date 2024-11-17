@@ -15,7 +15,7 @@ export default function GoogleAuthButton({ className }: GoogleAuthButtonProps) {
   const handleGoogleLogin = () => {
     setIsLoading(true);
     // バックエンドのGoogle認証エンドポイントにリダイレクトさせる
-    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`;
+    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google`;
   };
 
   return (

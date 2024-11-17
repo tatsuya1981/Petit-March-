@@ -78,9 +78,9 @@ export const SignUpForm = () => {
     setIsSubmitting(true);
     try {
       // フォームの入力データを送信
-      const response = await axios.post('/api/auth/sign-up', data);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/sign-up`, data);
       // 処理が成功したら指定ページへリダイレクトする
-      router.push('/reviews');
+      router.push('/review');
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setSubmitError(error.response?.data?.message || '登録に失敗しました。もう一度お試しください。');

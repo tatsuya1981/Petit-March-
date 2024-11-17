@@ -11,7 +11,7 @@
   height: 80px;
   display: flex;
   justify-content: space-between;
-  padding: 0 3rem;
+  padding: 0.75rem 3rem;
   @include mx.min('md') {
     padding: 0 2rem;
   }
@@ -92,4 +92,24 @@
 
 .link:hover {
   opacity: 0.7;
+}
+
+.userName {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+  color: rgba(var(--color-bg-primary));
+  white-space: nowrap;
+  @include mx.min('sm') {
+    font-size: 14px;
+  }
+}
+
+.logoutButton {
+  padding: 0.5rem 1rem;
+  white-space: nowrap;
+
+  @include mx.min('sm') {
+    padding: 0.25rem 0.75rem;
+  }
 }

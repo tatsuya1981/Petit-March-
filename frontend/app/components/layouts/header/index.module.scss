@@ -13,10 +13,10 @@
   justify-content: space-between;
   padding: 0.75rem 3rem;
   @include mx.min('md') {
-    padding: 0 2rem;
+    padding: 0.5rem 2rem;
   }
   @include mx.min('sm') {
-    padding: 0 1rem;
+    padding: 0.5rem 1rem;
   }
 }
 
@@ -66,10 +66,8 @@
 .nav {
   color: rgba(var(--color-bg-primary));
   display: flex;
+  justify-content: flex-end;
   align-items: flex-end;
-  flex: 1 1 auto;
-  width: 100%;
-  max-width: 150px;
 }
 
 .link {
@@ -94,9 +92,13 @@
   opacity: 0.7;
 }
 
-.userName {
+.loginContainer {
+  width: auto;
   display: flex;
   align-items: center;
+}
+
+.userName {
   margin-right: 1rem;
   color: rgba(var(--color-bg-primary));
   white-space: nowrap;

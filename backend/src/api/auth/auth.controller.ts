@@ -22,7 +22,7 @@ export class AuthController {
       // ユーザーデータのユニーク判定
       const isUnique = await AuthModel.uniqueness(userData.email, userData.name);
       if (!isUnique) {
-        return next(new AppError('Name and email address are already in use', 400));
+        return next(new AppError('名前かメールアドレスが既に使用されています', 400));
       }
       // モデルへデータを渡しサインアップ処理
       const user = await AuthModel.createUser(userData);

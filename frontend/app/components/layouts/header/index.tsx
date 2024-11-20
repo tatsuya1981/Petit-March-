@@ -11,13 +11,56 @@ import LogoutButton from '@/components/elements/logoutButton';
 const Header = () => {
   const { isAuthenticated } = useAuth();
   const [userName, setUserName] = useState<string>('');
+  const [mounted, setMounted] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
 
   useEffect(() => {
-    const storedName = localStorage.getItem('name');
-    if (storedName) {
-      setUserName(storedName);
-    }
-  }, []);
+    setMounted(true);
+
+    const initializeAuth = () => {
+      const isAuth = isAuthenticated();
+      setIsAuthed(isAuth);
+      if (isAuth) {
+        const storedName = localStorage.getItem('name');
+        console.log('Stored name:', storedName);
+        if (storedName) {
+          setUserName(storedName);
+        }
+      }
+    };
+    initializeAuth();
+
+    // 認証状態の変更を監視
+    const checkAuth = () => {
+      const isAuth = isAuthenticated();
+      setIsAuthed(isAuth);
+
+      if (isAuth) {
+        const currentName = localStorage.getItem('name');
+        console.log('Current name:', currentName);
+        if (currentName) {
+          setUserName(currentName);
+        } else {
+          setUserName('');
+        }
+      }
+    };
+
+    // イベントリスナーを設定
+    window.addEventListener('storage', checkAuth);
+    // カスタムイベントを設定
+    window.addEventListener('authStateChange', checkAuth);
+
+    // クリーンアップ
+    return () => {
+      window.removeEventListener('storage', checkAuth);
+      window.removeEventListener('authStateChange', checkAuth);
+    };
+  }, [isAuthenticated]);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <header className={styles.header}>
@@ -28,11 +71,11 @@ const Header = () => {
           </Link>
         </div>
         <nav className={styles.nav}>
-          {isAuthenticated() ? (
-            <>
+          {isAuthed ? (
+            <div className={styles.loginContainer}>
               <span className={styles.userName}> {userName}さん </span>
               <LogoutButton className={styles.logoutButton} />
-            </>
+            </div>
           ) : (
             <>
               <Link href="/sign-up" className={styles.link}>

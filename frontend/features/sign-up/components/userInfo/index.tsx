@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import FormInput from '@/components/elements/formInput';
 import FormSelect from '@/components/elements/formSelect';
+import { useAuth } from '@/../../hooks/useAuth';
 
 const signUpSchema = z
   .object({
@@ -36,6 +37,7 @@ export const SignUpForm = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   // フォーム送信の状態管理 true の場合は送信ボタン無効化
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { handleAuthSuccess } = useAuth();
 
   const {
     // 各入力フィールドを登録
@@ -79,8 +81,40 @@ export const SignUpForm = () => {
     try {
       // フォームの入力データを送信
       const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/sign-up`, data);
-      // 処理が成功したら指定ページへリダイレクトする
-      router.push('/review');
+      console.log('Sign-up response:', response.data);
+      if (response.data.token && response.data.user) {
+        // データを一旦変数に格納して確認
+        const authData = {
+          token: response.data.token,
+          userId: response.data.user.id.toString(),
+          name: response.data.user.name,
+          email: response.data.user.email,
+        };
+        console.log('Preparing auth data:', authData);
+
+        try {
+          await handleAuthSuccess(authData);
+          const storedData = {
+            token: localStorage.getItem('token'),
+            userId: localStorage.getItem('userId'),
+            name: localStorage.getItem('name'),
+            email: localStorage.getItem('email'),
+          };
+          console.log('Verification - Stored data:', storedData);
+          if (!storedData.name || !storedData.token) {
+            throw new Error('Auth data not properly saved');
+          }
+          setTimeout(() => {
+            // 処理が成功したら指定ページへリダイレクトする
+            router.push('/review');
+          }, 100);
+        } catch (storageError) {
+          console.error('Storage error:', storageError);
+          setSubmitError('認証情報の保存に失敗しました。もう一度お試しください。');
+        }
+      } else {
+        throw new Error('Invalid response format');
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setSubmitError(error.response?.data?.message || '登録に失敗しました。もう一度お試しください。');

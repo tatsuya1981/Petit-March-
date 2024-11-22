@@ -1,0 +1,27 @@
+@use '../../../../app/styles/mixins.scss';
+
+.titleContainer {
+  width: 80%;
+  display: inline-block;
+  text-align: center;
+}
+
+.title {
+  margin-bottom: 1rem;
+  font-size: clamp(20px, 4vw, 24px);
+}
+
+.text {
+  margin-bottom: 2rem;
+  font-size: clamp(14px, 2vw, 18px);
+}
+
+.notice {
+  text-align: right;
+  p {
+    &::before {
+      content: '*';
+      color: rgb(var(--color-text-red));
+    }
+  }
+}

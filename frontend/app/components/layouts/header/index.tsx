@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import petitMarche from '@/images/PetitMarche.svg';
 import { useAuth } from '@/../../hooks/useAuth';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import LogoutButton from '@/components/elements/logoutButton';
 
 const Header = () => {
@@ -14,16 +14,23 @@ const Header = () => {
   const [mounted, setMounted] = useState(false);
   const [isAuthed, setIsAuthed] = useState(false);
 
+  // 認証状態をチェック・更新する共通関数
+  const updateIsAuth = useCallback(() => {
+    const auth = isAuthenticated();
+    setIsAuthed(auth);
+    return auth;
+  }, [isAuthenticated]);
+
   useEffect(() => {
     setMounted(true);
-
     const initializeAuth = () => {
-      const isAuth = isAuthenticated();
-      setIsAuthed(isAuth);
+      const isAuth = updateIsAuth();
       if (isAuth) {
+        // 認証されているならローカルストレージからユーザー名取得
         const storedName = localStorage.getItem('name');
         console.log('Stored name:', storedName);
         if (storedName) {
+          // ユーザー名が取得出来ていれば状態を更新
           setUserName(storedName);
         }
       }
@@ -32,9 +39,7 @@ const Header = () => {
 
     // 認証状態の変更を監視
     const checkAuth = () => {
-      const isAuth = isAuthenticated();
-      setIsAuthed(isAuth);
-
+      const isAuth = updateIsAuth();
       if (isAuth) {
         const currentName = localStorage.getItem('name');
         console.log('Current name:', currentName);

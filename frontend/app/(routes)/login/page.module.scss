@@ -4,7 +4,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
   background-color: rgba(var(--color-bg-primary));
   padding: 5rem 0;
+}
+
+.divider {
+  font-size: clamp(1rem, 1.2rem, 1.4rem);
+  margin-bottom: 2rem;
 }

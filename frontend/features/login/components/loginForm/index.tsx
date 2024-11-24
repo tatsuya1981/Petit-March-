@@ -8,7 +8,6 @@ import FormInput from '@/components/elements/formInput';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import GoogleAuthButton from '@/components/elements/googleAuthButton';
 
 const loginSchema = z.object({
   email: z
@@ -42,7 +41,7 @@ export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
     setServerError('');
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, data);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/log-in`, data);
       const { token, user } = response.data;
 
       await handleAuthSuccess({
@@ -78,7 +77,6 @@ export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
           type="password"
           error={errors.password?.message}
           required
-          placeholder="example@example.com"
         />
         <button
           type="submit"
@@ -88,10 +86,6 @@ export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
           {isSubmitting ? 'ログイン中' : 'ログイン'}
         </button>
       </form>
-      <div className={styles.divider}>
-        <span>または</span>
-      </div>
-      <GoogleAuthButton className={styles.googleButton} />
     </div>
   );
 };

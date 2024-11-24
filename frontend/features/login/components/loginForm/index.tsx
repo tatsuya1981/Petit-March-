@@ -20,16 +20,21 @@ const loginSchema = z.object({
     .min(8, { message: 'パスワードは８文字以上です' }),
 });
 
+// loginSchemaから型推論し、LoginFormDataという型を生成
 type LoginFormData = z.infer<typeof loginSchema>;
-
+// コンポーネントのプロップスの型定義
 interface LoginFormProps {
+  // ログインが成功した場合に呼び出されるコールバック関数
   onSuccess?: () => void;
+  // ログインが失敗した場合に呼び出されるコールバック関数
   onError?: (error: string) => void;
 }
 
 export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
+  // サーバーのエラーメッセージを管理
   const [serverError, setServerError] = useState('');
   const { handleAuthSuccess } = useAuth();
+  // useFormでフォームデータの管理
   const {
     register,
     handleSubmit,
@@ -39,7 +44,6 @@ export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
   });
   const onSubmit = async (data: LoginFormData) => {
     setServerError('');
-
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/log-in`, data);
       const { token, user } = response.data;

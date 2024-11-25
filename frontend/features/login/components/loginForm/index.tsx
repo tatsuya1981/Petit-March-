@@ -20,41 +20,55 @@ const loginSchema = z.object({
     .min(8, { message: 'パスワードは８文字以上です' }),
 });
 
+// loginSchemaから型推論し、LoginFormDataという型を生成
 type LoginFormData = z.infer<typeof loginSchema>;
-
+// コンポーネントのプロップスの型定義
 interface LoginFormProps {
+  // ログインが成功した場合に呼び出されるコールバック関数
   onSuccess?: () => void;
+  // ログインが失敗した場合に呼び出されるコールバック関数
   onError?: (error: string) => void;
 }
 
 export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
+  // サーバーのエラーメッセージを管理
   const [serverError, setServerError] = useState('');
   const { handleAuthSuccess } = useAuth();
+
   const {
+    // 入力フィールドをフォームに登録させるregister関数
     register,
     handleSubmit,
+    // フォームの状態を設定する（バリデーションエラー、送信中）
     formState: { errors, isSubmitting },
+    // useFormでフォームデータの管理
   } = useForm<LoginFormData>({
+    // loginSchemaに基づいたバリデーション判定
     resolver: zodResolver(loginSchema),
   });
   const onSubmit = async (data: LoginFormData) => {
+    // エラーメッセージをリセット
     setServerError('');
-
     try {
+      // バックエンドへPOSTリクエスト
       const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/log-in`, data);
       const { token, user } = response.data;
-
+      // 認証成功時、カスタムフックのhandleAuthSuccess関数にデータを渡す
       await handleAuthSuccess({
         token,
         userId: user.id,
         name: user.name,
         email: user.email,
       });
+      // 親コンポーネントからonSuccessが渡されていたらその関数を実行
       onSuccess?.();
     } catch (error) {
+      // axios関連のエラーだった場合
       if (axios.isAxiosError(error)) {
         const errorMessage = error.response?.data?.message || 'ログインに失敗しました';
+        // サーバーからのレスポンスデータのエラーメッセージで状態を更新
         setServerError(errorMessage);
+        // 親コンポーネントからonErrorが渡されていたらその関数を実行
         onError?.(errorMessage);
       }
     }

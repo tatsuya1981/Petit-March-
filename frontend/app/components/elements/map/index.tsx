@@ -59,6 +59,18 @@ const Map: React.FC<MapProps> = ({ initialLocation, onStoreSelect }) => {
     return component ? component.long_name : '';
   };
 
+  // 郵便番号をフォーマットするヘルパー関数
+  const formatZipCode = (zip: string): string => {
+    // 数字以外を消去する
+    const numbers = zip.replace(/[^\d]/g, '');
+    // 7桁であることを確認する
+    if (numbers.length !== 7) {
+      return '';
+    }
+    // 123-4567といった形式に変換
+    return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+  };
+
   // 住所を構造化するヘルパー関数
   const parseAddress = (
     addressComponents: google.maps.GeocoderAddressComponent[],
@@ -83,8 +95,15 @@ const Map: React.FC<MapProps> = ({ initialLocation, onStoreSelect }) => {
     const streetAddress1 = [district, streetNumber, premise].filter(Boolean).join('');
     // 建物名
     const streetAddress2 = getAddressComponent(addressComponents, 'establishment');
-    // 郵便番号をハイフン無しに変換
-    const zip = getAddressComponent(addressComponents, 'postal_code').replace('-', '');
+    // 郵便番号をバックエンドの形式に合わせる
+    const rawZip = getAddressComponent(addressComponents, 'postal_code');
+    const zip = formatZipCode(rawZip);
+
+    // バリデーション
+    if (!zip.match(/^\d{3}-\d{4}$/)) {
+      console.error('Invalid zip code format', zip);
+      // デフォルトの郵便番号を設定するか、エラーハンドリングを行う
+    }
 
     return {
       prefecture,
@@ -110,6 +129,10 @@ const Map: React.FC<MapProps> = ({ initialLocation, onStoreSelect }) => {
         const formattedAddress = response.results[0].formatted_address;
         // 住所情報を構造化
         const addressInfo = parseAddress(addressComponents);
+        // 郵便番号のバリデーション
+        if (!addressInfo.zip.match(/^\d{3}-\d{4}$/)) {
+          throw new Error('Invalid zip code format received from Google Maps');
+        }
         // 周辺の施設情報を取得
         const placesService = new google.maps.places.PlacesService(document.createElement('div'));
         // クリックした周辺の指定タイプの施設を検索

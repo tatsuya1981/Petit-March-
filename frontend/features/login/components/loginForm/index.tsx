@@ -1,13 +1,14 @@
 'use client';
 
 import styles from './index.module.scss';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/../../hooks/useAuth';
 import axios from 'axios';
 import FormInput from '@/components/elements/formInput';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 
 const loginSchema = z.object({
   email: z
@@ -33,7 +34,14 @@ interface LoginFormProps {
 export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
   // サーバーのエラーメッセージを管理
   const [serverError, setServerError] = useState('');
+  const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
   const { handleAuthSuccess } = useAuth();
+
+  // クライアントレンダリング時にtrue
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const {
     // 入力フィールドをフォームに登録させるregister関数
@@ -46,6 +54,7 @@ export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
     // loginSchemaに基づいたバリデーション判定
     resolver: zodResolver(loginSchema),
   });
+
   const onSubmit = async (data: LoginFormData) => {
     // エラーメッセージをリセット
     setServerError('');
@@ -62,6 +71,7 @@ export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
       });
       // 親コンポーネントからonSuccessが渡されていたらその関数を実行
       onSuccess?.();
+      router.replace('/review');
     } catch (error) {
       // axios関連のエラーだった場合
       if (axios.isAxiosError(error)) {

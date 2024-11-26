@@ -106,7 +106,7 @@ export const SignUpForm = () => {
           }
           setTimeout(() => {
             // 処理が成功したら指定ページへリダイレクトする
-            router.push('/review');
+            router.replace('/review');
           }, 100);
         } catch (storageError) {
           console.error('Storage error:', storageError);

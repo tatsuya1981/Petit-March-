@@ -66,6 +66,7 @@ export const useAuth = () => {
         setIsAuthenticated(true);
         // 認証状態の変更を通知
         notifyAuthStateChange();
+        router.replace('/review');
       }
     },
     [notifyAuthStateChange],
@@ -80,7 +81,7 @@ export const useAuth = () => {
         const token = localStorage.getItem('token');
         if (token) {
           await axios.post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/log-out`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/log-out`,
             // 空のリクエストボディ
             {},
             {
@@ -109,7 +110,7 @@ export const useAuth = () => {
         // ログアウト時も認証状態の変更を通知
         notifyAuthStateChange();
         setIsLoading(false);
-        router.push('/');
+        router.replace('/');
       }
     }
   }, [router, notifyAuthStateChange]);

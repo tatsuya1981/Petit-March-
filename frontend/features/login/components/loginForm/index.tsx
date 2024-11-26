@@ -8,6 +8,7 @@ import FormInput from '@/components/elements/formInput';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 
 const loginSchema = z.object({
   email: z
@@ -34,6 +35,7 @@ export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
   // サーバーのエラーメッセージを管理
   const [serverError, setServerError] = useState('');
   const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
   const { handleAuthSuccess } = useAuth();
 
   // クライアントレンダリング時にtrue
@@ -53,11 +55,6 @@ export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
     resolver: zodResolver(loginSchema),
   });
 
-  //サーバーサイドレンダリング時は最小限のUI
-  if (!isMounted) {
-    return <div className={styles.loginContainer}>Loading...</div>;
-  }
-
   const onSubmit = async (data: LoginFormData) => {
     // エラーメッセージをリセット
     setServerError('');
@@ -74,6 +71,7 @@ export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
       });
       // 親コンポーネントからonSuccessが渡されていたらその関数を実行
       onSuccess?.();
+      router.replace('/review');
     } catch (error) {
       // axios関連のエラーだった場合
       if (axios.isAxiosError(error)) {

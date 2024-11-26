@@ -22,7 +22,7 @@ export default function AuthCallback() {
       localStorage.setItem('name', name || '');
 
       // ユーザーを指定ページにリダイレクト
-      router.push('/reviews');
+      router.replace('/review');
     } else {
       // エラーの場合はログインページにリダイレクト
       router.push('/login?error=auth_failed');

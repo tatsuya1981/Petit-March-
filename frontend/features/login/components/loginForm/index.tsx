@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './index.module.scss';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/../../hooks/useAuth';
 import axios from 'axios';
 import FormInput from '@/components/elements/formInput';
@@ -33,7 +33,13 @@ interface LoginFormProps {
 export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
   // サーバーのエラーメッセージを管理
   const [serverError, setServerError] = useState('');
+  const [isMounted, setIsMounted] = useState(false);
   const { handleAuthSuccess } = useAuth();
+
+  // クライアントレンダリング時にtrue
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const {
     // 入力フィールドをフォームに登録させるregister関数
@@ -46,6 +52,12 @@ export const LoginForm = ({ onSuccess, onError }: LoginFormProps) => {
     // loginSchemaに基づいたバリデーション判定
     resolver: zodResolver(loginSchema),
   });
+
+  //サーバーサイドレンダリング時は最小限のUI
+  if (!isMounted) {
+    return <div className={styles.loginContainer}>Loading...</div>;
+  }
+
   const onSubmit = async (data: LoginFormData) => {
     // エラーメッセージをリセット
     setServerError('');

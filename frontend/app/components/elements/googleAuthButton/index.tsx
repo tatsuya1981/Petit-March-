@@ -2,7 +2,7 @@
 
 import styles from './index.module.scss';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface GoogleAuthButtonProps {
   className?: string;
@@ -10,13 +10,25 @@ interface GoogleAuthButtonProps {
 
 export default function GoogleAuthButton({ className }: GoogleAuthButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
+  // クライアントサイドでのマウント状態を管理
+  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
+
+  // レンダリング時にマウント状態をtrueへ
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleGoogleLogin = () => {
     setIsLoading(true);
     // バックエンドのGoogle認証エンドポイントにリダイレクトさせる
     window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google`;
   };
+
+  // isMountedがfalseのサーバーサイドレンダリング時は何も表示させない
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <button

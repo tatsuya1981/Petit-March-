@@ -53,17 +53,19 @@ export const create = [
     let files = req.files as CustomMulterFile[];
     const reviewData = req.body;
     // リクエストから order 情報の検証
-    if (!req.body.orders || !Array.isArray(req.body.orders)) {
-      return next(new AppError('Order information is required for each image', 400));
-    }
-
-    // Multer.file型にリクエストの情報を追加する処理
-    files = files.map((file, index) => {
-      file.order = parseInt(req.body.orders, 10);
-      file.isMain = index === 0;
-      return file;
-    });
     try {
+      if (files && files.length > 0) {
+        const orders = JSON.parse(req.body.orders || '[]');
+        if (!Array.isArray(orders) || orders.length !== files.length) {
+          return next(new AppError('Invalid order information for images', 400));
+        }
+        // ファイルに order と isMain の情報追加
+        files = files.map((file, index) => ({
+          ...file,
+          order: orders[index],
+          isMain: index === 0,
+        }));
+      }
       const newReview = await reviewModel.createReview(reviewData, files);
       res.status(201).json(newReview);
     } catch (error) {

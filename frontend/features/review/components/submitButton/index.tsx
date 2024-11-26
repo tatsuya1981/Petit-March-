@@ -101,7 +101,9 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
         };
 
         // 店舗作成とレビュー送信を並列で行う
-        const [storeResponse] = await Promise.all([axios.post('/api/store', storeData)]);
+        const [storeResponse] = await Promise.all([
+          axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/store/`, storeData),
+        ]);
         // 店舗情報が作成成功したらstoreIdを作成
         if (storeResponse.data?.id) {
           storeId = storeResponse.data.id;
@@ -118,7 +120,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
         })),
       };
       // レビューデータの送信
-      const response = await axios.post('/api/reviews', reviewWithImages, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reviews/`, reviewWithImages, {
         headers: {
           'Content-Type': 'application/json',
         },

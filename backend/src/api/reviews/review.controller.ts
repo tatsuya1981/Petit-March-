@@ -54,6 +54,7 @@ export const create = [
     const reviewData = req.body;
     // リクエストから order 情報の検証
     try {
+      // 画像が存在している場合req.body.ordersの文字列をパースして配列にする
       if (files && files.length > 0) {
         const orders = JSON.parse(req.body.orders || '[]');
         if (!Array.isArray(orders) || orders.length !== files.length) {

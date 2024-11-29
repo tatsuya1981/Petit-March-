@@ -65,6 +65,20 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
     try {
       setIsSubmitting(true);
 
+      // FormDataの作成
+      const formData = new FormData();
+
+      // レビューデータの追加
+      formData.append('userId', userId.toString());
+      formData.append('productId', productId.toString());
+      formData.append('brandId', brandId.toString());
+      formData.append('rating', rating.toString());
+      formData.append('title', title);
+      formData.append('productName', productName);
+      if (price) formData.append('price', price.toString());
+      if (purchaseDate) formData.append('purchaseDate', purchaseDate.toString());
+      formData.append('content', content);
+
       if (!userId || !productId || !brandId || !rating || !title || !productName || !content) {
         alert('必須項目を入力してください');
         setIsSubmitting(false);

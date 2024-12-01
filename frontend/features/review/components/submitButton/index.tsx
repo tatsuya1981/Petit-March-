@@ -39,11 +39,7 @@ interface SubmitButtonProps {
     zip: string;
     storeName?: string;
   };
-  images: {
-    order: number;
-    imageUrl: string;
-    isMain: boolean;
-  }[];
+  images: File[];
 }
 
 const SubmitButton: React.FC<SubmitButtonProps> = ({
@@ -64,91 +60,93 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-
-      // FormDataの作成
       const formData = new FormData();
 
-      // レビューデータの追加
+      // 必須項目のバリデーション
+      if (!userId || !productId || !brandId || !rating || !title || !productName || !content) {
+        throw new Error('必須項目をすべて入力してください');
+      }
+
+      // 数値データを文字列に変換して追加
       formData.append('userId', userId.toString());
       formData.append('productId', productId.toString());
       formData.append('brandId', brandId.toString());
       formData.append('rating', rating.toString());
+
+      // 文字列データの追加
       formData.append('title', title);
       formData.append('productName', productName);
-      if (price) formData.append('price', price.toString());
-      if (purchaseDate) formData.append('purchaseDate', purchaseDate.toString());
       formData.append('content', content);
 
-      if (!userId || !productId || !brandId || !rating || !title || !productName || !content) {
-        alert('必須項目を入力してください');
-        setIsSubmitting(false);
-        return;
+      // オプションフィールドの追加
+      if (typeof price !== 'undefined' && price !== null) {
+        formData.append('price', price.toString());
       }
 
-      // 基本的な送信データの構築
-      const reviewData: ReviewData = {
-        userId,
-        productId,
-        brandId,
-        rating,
-        title,
-        productName,
-        price,
-        purchaseDate,
-        content,
-      };
+      if (purchaseDate) {
+        formData.append('purchaseDate', purchaseDate.toISOString());
+      }
 
-      let storeId;
-
-      // 店舗情報がある場合は新規作成して紐付け
+      // 店舗情報の処理
       if (storeLocation) {
-        const storeData = {
-          brandId,
-          name: storeLocation.storeName || '',
-          latitude: storeLocation.lat,
-          longitude: storeLocation.lng,
-          prefecture: storeLocation.prefecture,
-          city: storeLocation.city,
-          streetAddress1: storeLocation.streetAddress1,
-          streetAddress2: storeLocation.streetAddress2,
-          zip: storeLocation.zip,
-        };
+        try {
+          const storeData = {
+            brandId,
+            name: storeLocation.storeName || 'Unknown Store',
+            latitude: storeLocation.lat,
+            longitude: storeLocation.lng,
+            prefecture: storeLocation.prefecture,
+            city: storeLocation.city,
+            streetAddress1: storeLocation.streetAddress1,
+            streetAddress2: storeLocation.streetAddress2,
+            zip: storeLocation.zip,
+          };
 
-        // 店舗作成とレビュー送信を並列で行う
-        const [storeResponse] = await Promise.all([
-          axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/store/`, storeData),
-        ]);
-        // 店舗情報が作成成功したらstoreIdを作成
-        if (storeResponse.data?.id) {
-          storeId = storeResponse.data.id;
+          const storeResponse = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/store/`, storeData);
+
+          const newStoreId = storeResponse.data?.id;
+          if (newStoreId) {
+            formData.append('storeId', newStoreId.toString());
+          }
+        } catch (error) {
+          console.error('Store creation failed:', error);
         }
       }
-      // 画像データの追加
-      const reviewWithImages = {
-        ...reviewData,
-        storeId,
-        images: images.map((img) => ({
-          order: img.order,
-          imageUrl: img.imageUrl,
-          isMain: img.isMain,
-        })),
-      };
+
+      // 画像の処理
+      if (images && images.length > 0) {
+        const orders = images.map((_, index) => index);
+        formData.append('orders', JSON.stringify(orders));
+
+        images.forEach((image) => {
+          formData.append('image', image);
+        });
+      }
+
       // レビューデータの送信
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reviews/`, reviewWithImages, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reviews/`, formData, {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
       });
 
       if (response.status === 201) {
         alert('レビューを投稿しました！');
-        // 作成したレビュー詳細ページへリダイレクトさせる
-        const reviewId = response.data.id;
-        window.location.href = `/reviews/${reviewId}`;
+        window.location.href = `/reviews/${response.data.id}`;
       }
-    } catch (error: any) {
-      console.error('Error submitting review', error);
-      alert('レビューの投稿に失敗しました' + (error.response?.data?.message || error.message));
+    } catch (error) {
+      console.error('Review submission error:', error);
+      let errorMessage = 'レビューの投稿に失敗しました';
+
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        console.error('Error response data:', responseData);
+        errorMessage += `: ${responseData?.message || error.message}`;
+      } else if (error instanceof Error) {
+        errorMessage += `: ${error.message}`;
+      }
+
+      alert(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

@@ -49,11 +49,27 @@ export const create = [
   // upload メソッドによってフォームフィールドの名前と最大数を指定
   upload.array('image', 3),
   async (req: Request, res: Response, next: NextFunction): Promise<Review | void> => {
-    //Multer によってアップロードされた image ファイルのデータを変数filesへ格納
-    let files = req.files as CustomMulterFile[];
-    const reviewData = req.body;
-    // リクエストから order 情報の検証
     try {
+      //Multer によってアップロードされた image ファイルのデータを変数filesへ格納
+      let files = req.files as CustomMulterFile[];
+      const reviewData = {
+        userId: parseInt(req.body.userId),
+        productId: parseInt(req.body.productId),
+        brandId: parseInt(req.body.brandId),
+        rating: parseInt(req.body.rating),
+        title: req.body.title,
+        productName: req.body.productName,
+        price: req.body.price ? parseFloat(req.body.price) : undefined,
+        purchaseDate: req.body.purchaseDate,
+        content: req.body.content,
+        storeId: req.body.storeId ? parseInt(req.body.storeId) : undefined,
+      };
+      // デバッグ用
+      console.log('Received review data:', reviewData);
+      console.log(
+        'Received files:',
+        files?.map((f) => ({ name: f.originalname, size: f.size })),
+      );
       // 画像が存在している場合req.body.ordersの文字列をパースして配列にする
       if (files && files.length > 0) {
         const orders = JSON.parse(req.body.orders || '[]');
@@ -71,9 +87,13 @@ export const create = [
       res.status(201).json(newReview);
     } catch (error) {
       if (error instanceof Error) {
-        next(new AppError(error.message, 400));
+        const errorMessage =
+          error.message === 'validation Error'
+            ? 'Invalid review data. Please check all required fields.'
+            : error.message;
+        next(new AppError(errorMessage, 400));
       } else {
-        next(error);
+        next(new AppError('An unexpected error occurred', 500));
       }
     }
   },

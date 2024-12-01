@@ -66,7 +66,6 @@ export const useAuth = () => {
         setIsAuthenticated(true);
         // 認証状態の変更を通知
         notifyAuthStateChange();
-        router.replace('/review');
       }
     },
     [notifyAuthStateChange],

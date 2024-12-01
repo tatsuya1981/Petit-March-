@@ -69,6 +69,15 @@ const Home = () => {
   // 画像ファイルが投稿された時のイベントハンドラー
   const handleImagesSelected = (files: ImageFile[]) => {
     setSelectedImages(files);
+    console.log(
+      'Selected images:',
+      files.map((file) => ({
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        order: file.order,
+      })),
+    );
   };
   // 店舗が選択された時のイベントハンドラー
   const handleStoreSelect = (location: StoreLocation) => {
@@ -116,11 +125,8 @@ const Home = () => {
           purchaseDate={reviewInfo.purchaseDate || undefined}
           content={reviewInfo.content}
           storeLocation={storeLocation || undefined}
-          images={selectedImages.map((img) => ({
-            order: img.order,
-            imageUrl: URL.createObjectURL(img),
-            isMain: img.isMain,
-          }))}
+          // Fileオブジェクトをそのまま渡す
+          images={selectedImages}
         />
       </main>
     </>

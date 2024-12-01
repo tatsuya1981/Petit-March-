@@ -91,33 +91,47 @@ export class ReviewModel {
   };
   // レビューの生成
   static createReview = async (reviewData: ReviewInput, files: CustomMulterFile[]): Promise<ReviewWithImages> => {
-    // zodスキーマでバリデーション実施
-    const parseReview = await reviewSchema.safeParse(reviewData);
-    if (!parseReview.success) {
-      throw new Error('validation Error');
-    }
-    const { images, ...reviewDataWithoutImage } = parseReview.data;
-    // リクエストの画像ファイルを専用関数でS3へアップロード
-    const processedImages = await processImages(files);
+    try {
+      // zodスキーマでバリデーション実施
+      const parseReview = await reviewSchema.safeParse(reviewData);
+      if (!parseReview.success) {
+        const errorMessages = parseReview.error.errors.map((err) => `${err.path.join('.')}: ${err.message}`).join(', ');
+        throw new Error(`Validation Error: ${errorMessages}`);
+      }
 
-    return await prisma.review.create({
-      data: {
-        ...reviewDataWithoutImage,
-        price:
-          reviewDataWithoutImage.price !== undefined
-            ? new Prisma.Decimal(reviewDataWithoutImage.price.toString())
-            : null,
-        // ISO-8601形式の日時をDateオブジェクトへ変換
-        purchaseDate: reviewDataWithoutImage.purchaseDate ? new Date(reviewDataWithoutImage.purchaseDate) : null,
-        images: {
-          create: processedImages.map((image) => ({
-            imageUrl: image.imageUrl,
-            order: image.order,
-          })),
+      const { images, ...reviewDataWithoutImage } = parseReview.data;
+
+      // 画像の処理
+      const processedImages = await processImages(files);
+      if (files?.length > 0 && processedImages.length === 0) {
+        throw new Error('Failed to process image files');
+      }
+
+      // データベースへの保存
+      return await prisma.review.create({
+        data: {
+          ...reviewDataWithoutImage,
+          price:
+            reviewDataWithoutImage.price !== undefined
+              ? new Prisma.Decimal(reviewDataWithoutImage.price.toString())
+              : null,
+          purchaseDate: reviewDataWithoutImage.purchaseDate ? new Date(reviewDataWithoutImage.purchaseDate) : null,
+          images: {
+            create: processedImages.map((image) => ({
+              imageUrl: image.imageUrl,
+              order: image.order,
+            })),
+          },
         },
-      },
-      include: { images: true },
-    });
+        include: { images: true },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // Prismaのエラーをより分かりやすいメッセージに変換
+        throw new Error(`Database error: ${error.message}`);
+      }
+      throw error;
+    }
   };
 
   // レビュー更新

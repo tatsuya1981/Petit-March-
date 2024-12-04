@@ -1,0 +1,16 @@
+@use '../../../../app/styles/mixins.scss' as mx;
+
+.submitButton {
+  width: 60%;
+  padding: 1.5rem 2rem;
+  margin-bottom: 3rem;
+  border-radius: 100px;
+  background-color: rgb(var(--color-bg-accent-dark-brown));
+  color: rgb(var(--color-text-primary));
+  font-size: clamp(14px, 2vw, 18px);
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}

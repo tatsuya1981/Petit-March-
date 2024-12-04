@@ -60,6 +60,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
+      // FormDataをインスタンス化してformDataへ格納
       const formData = new FormData();
 
       // 必須項目のバリデーション
@@ -67,22 +68,23 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
         throw new Error('必須項目をすべて入力してください');
       }
 
-      // 数値データを文字列に変換して追加
+      // 数値データを文字列に変換してFormDataに追加
       formData.append('userId', userId.toString());
       formData.append('productId', productId.toString());
       formData.append('brandId', brandId.toString());
       formData.append('rating', rating.toString());
 
-      // 文字列データの追加
+      // 文字列データをFormDataに追加
       formData.append('title', title);
       formData.append('productName', productName);
       formData.append('content', content);
 
       // オプションフィールドの追加
+      // 値段がundefinedやnullではない場合FormDataに追加
       if (typeof price !== 'undefined' && price !== null) {
         formData.append('price', price.toString());
       }
-
+      // 日付が存在する場合FormDataに追加
       if (purchaseDate) {
         formData.append('purchaseDate', purchaseDate.toISOString());
       }

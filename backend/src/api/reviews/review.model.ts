@@ -5,7 +5,7 @@ import { Review, Prisma, Image } from '@prisma/client';
 import prisma from '../../config/database';
 import { z } from 'zod';
 import { AppError } from '../../middleware/errorHandler';
-import { CustomMulterFile } from './review.controller';
+import { CustomMulterFile, SearchParams } from './review.controller';
 import S3Service from '../../utils/s3Service';
 
 // zodライブラリを使用してプロパティの型や制約を定義
@@ -194,6 +194,18 @@ export class ReviewModel {
     return await prisma.review.delete({
       where: { id },
     });
+  };
+  // レビュー検索
+  static searchReviews = async (params: SearchParams): Promise<ReviewWithImages[]> => {
+    // Prismaのwhereクエリを動的に構築
+    const where: Prisma.ReviewWhereInput = {};
+    if (params.productName) {
+      where.productName = {
+        contains: params.productName,
+        // 大文字と小文字を区別しない設定
+        mode: 'insensitive',
+      };
+    }
   };
 }
 

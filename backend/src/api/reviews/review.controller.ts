@@ -9,6 +9,14 @@ import S3Service from '../../utils/s3Service';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
+export interface SearchParams {
+  productName?: string;
+  productId?: number;
+  priceMin?: number;
+  priceMax?: number;
+  brandId?: number;
+}
+
 // Express.Multer.File に order と isMain を追加してカスタム
 export interface CustomMulterFile extends Express.Multer.File {
   order: number; // 画像の順序
@@ -134,6 +142,27 @@ export const remove = async (req: Request, res: Response, next: NextFunction) =>
   try {
     await reviewModel.deleteReview(reviewId);
     res.status(204).send();
+  } catch (error) {
+    if (error instanceof Error) {
+      next(new AppError(error.message, 400));
+    } else {
+      next(error);
+    }
+  }
+};
+
+// レビュー検索用
+export const search = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const searchParams: SearchParams = {
+      productName: req.query.productName as string,
+      productId: req.query.productId ? parseInt(req.query.productId as string) : undefined,
+      priceMin: req.query.priceMin ? parseInt(req.query.priceMin as string) : undefined,
+      priceMax: req.query.priceMax ? parseInt(req.query.priceMax as string) : undefined,
+      brandId: req.query.brandId ? parseInt(req.query.brandId as string) : undefined,
+    };
+    const reviews = await reviewModel.searchReviews(searchParams);
+    res.json(reviews);
   } catch (error) {
     if (error instanceof Error) {
       next(new AppError(error.message, 400));

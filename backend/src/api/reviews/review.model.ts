@@ -206,6 +206,35 @@ export class ReviewModel {
         mode: 'insensitive',
       };
     }
+    if (params.productId) {
+      where.brandId = params.productId;
+    }
+    if (params.brandId) {
+      where.brandId = params.brandId;
+    }
+    // 価格範囲の検索条件
+    if (params.priceMin !== undefined || params.priceMax !== undefined) {
+      where.price = {};
+      if (params.priceMin !== undefined) {
+        where.price.gte = new Prisma.Decimal(params.priceMin.toString());
+      }
+      if (params.priceMax !== undefined) {
+        where.price.lte = new Prisma.Decimal(params.priceMax.toString());
+      }
+    }
+    // レビューを検索
+    const reviews = await prisma.review.findMany({
+      where,
+      include: {
+        images: true,
+        brand: true,
+        product: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    return reviews;
   };
 }
 

@@ -161,6 +161,13 @@ export const search = async (req: Request, res: Response, next: NextFunction): P
       priceMax: req.query.priceMax ? parseInt(req.query.priceMax as string) : undefined,
       brandId: req.query.brandId ? parseInt(req.query.brandId as string) : undefined,
     };
-    const reviews = await reviewModel
+    const reviews = await reviewModel.searchReviews(searchParams);
+    res.json(reviews);
+  } catch (error) {
+    if (error instanceof Error) {
+      next(new AppError(error.message, 400));
+    } else {
+      next(error);
+    }
   }
-}
+};

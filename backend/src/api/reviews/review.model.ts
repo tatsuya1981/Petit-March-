@@ -207,19 +207,23 @@ export class ReviewModel {
       };
     }
     if (params.productId) {
-      where.brandId = params.productId;
+      where.productId = params.productId;
     }
     if (params.brandId) {
       where.brandId = params.brandId;
     }
-    // 価格範囲の検索条件
+    // 価格の検索条件
     if (params.priceMin !== undefined || params.priceMax !== undefined) {
       where.price = {};
+      // 価格を高精度の数値へ変換する
+      const toDecimal = (value: number): Prisma.Decimal => new Prisma.Decimal(value.toString());
+
+      // 最大・最小の両方設定された場合は範囲で検索される
       if (params.priceMin !== undefined) {
-        where.price.gte = new Prisma.Decimal(params.priceMin.toString());
+        where.price.gte = toDecimal(params.priceMin);
       }
       if (params.priceMax !== undefined) {
-        where.price.lte = new Prisma.Decimal(params.priceMax.toString());
+        where.price.lte = toDecimal(params.priceMax);
       }
     }
     // レビューを検索

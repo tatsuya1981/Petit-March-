@@ -167,7 +167,7 @@ export const search = async (req: Request, res: Response, next: NextFunction): P
     if (error instanceof Error) {
       next(new AppError(error.message, 400));
     } else {
-      next(error);
+      next(new AppError('Unexpected error occurred', 500));
     }
   }
 };

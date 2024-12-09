@@ -154,6 +154,7 @@ export const remove = async (req: Request, res: Response, next: NextFunction) =>
 // レビュー検索用
 export const search = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    // クエリパラメータから検索条件のデータを抽出してオブジェクトを作成
     const searchParams: SearchParams = {
       productName: req.query.productName as string,
       productId: req.query.productId ? parseInt(req.query.productId as string) : undefined,
@@ -161,9 +162,12 @@ export const search = async (req: Request, res: Response, next: NextFunction): P
       priceMax: req.query.priceMax ? parseInt(req.query.priceMax as string) : undefined,
       brandId: req.query.brandId ? parseInt(req.query.brandId as string) : undefined,
     };
+    // モデルへオブジェクトを渡してレビューを検索
     const reviews = await reviewModel.searchReviews(searchParams);
+    // JSON形式に変換してレスポンスとしてフロントエンドへ渡す
     res.json(reviews);
   } catch (error) {
+    // JavaScriptの組み込みErrorかチェック
     if (error instanceof Error) {
       next(new AppError(error.message, 400));
     } else {

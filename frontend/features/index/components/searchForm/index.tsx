@@ -22,7 +22,7 @@ interface Brand {
 }
 
 // 検索フォームを管理
-const searchForm = () => {
+const SearchForm = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   // 現在の検索条件を保持するための状態管理
@@ -64,4 +64,40 @@ const searchForm = () => {
     };
     fetchData();
   }, []);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // axiosはパラメータをオブジェクトとして渡せる
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reviews`, {
+        params: searchParams,
+      });
+      // 親コンポーネントでプロップスを後で作成 ⇩
+      // onSearch(response.data)
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.message || '検索に失敗しました');
+      } else {
+        setError('予期せぬエラーが発生しました');
+      }
+      console.error('検索エラー:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setSearchParams((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  if (isLoading) {
+    return <div>読み込み中・・・</div>;
+  }
 };

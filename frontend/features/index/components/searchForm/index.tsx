@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import styles from './index.module.scss';
+import FormInput from '@/components/elements/formInput';
 
 // 検索パラメータの型定義
 interface SearchParams {
@@ -100,4 +102,21 @@ const SearchForm = () => {
   if (isLoading) {
     return <div>読み込み中・・・</div>;
   }
+
+  return (
+    <form onSubmit={handleSubmit} className={styles.searchForm}>
+      {error && <div className={styles.error}>{error}</div>}
+
+      <div className={styles.searchGrid}>
+        <FormInput
+          label="商品名"
+          name="productName"
+          value={searchParams.productName}
+          onChange={handleChange}
+          placeholder="商品名を入力"
+          disabled={isLoading}
+        />
+      </div>
+    </form>
+  );
 };

@@ -116,7 +116,58 @@ const SearchForm = () => {
           placeholder="商品名を入力"
           disabled={isLoading}
         />
+        <div className={styles.formGroup}>
+          <label htmlFor="productId">商品カテゴリ</label>
+          <select
+            id="productId"
+            name="productId"
+            value={searchParams.productId}
+            onChange={handleChange}
+            className={styles.select}
+            disabled={isLoading}
+          >
+            <option value="">選択してください</option>
+            {products.map((product) => (
+              <option key={product.productId} value={product.productId}>
+                {product.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <FormInput
+          label="価格"
+          name="priceRange"
+          value={searchParams.priceRange}
+          onChange={handleChange}
+          placeholder="価格を入力"
+          disabled={isLoading}
+        />
+
+        <div className={styles.formGroup}>
+          <label htmlFor="brandId">購入先のコンビニ</label>
+          <select
+            id="brandId"
+            name="brandId"
+            value={searchParams.brandId}
+            onChange={handleChange}
+            className={styles.select}
+            disabled={isLoading}
+          >
+            <option value="">選択してください</option>
+            {brands.map((brand) => (
+              <option key={brand.brandId} value={brand.brandId}>
+                {brand.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
+
+      <button type="submit" className={styles.searchButton} disabled={isLoading}>
+        {isLoading ? '検索中・・・' : '検索'}
+      </button>
     </form>
   );
 };
+
+export default SearchForm;

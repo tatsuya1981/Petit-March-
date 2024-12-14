@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import styles from './index.module.scss';
+import FormInput from '@/components/elements/formInput';
 
 // 検索パラメータの型定義
 interface SearchParams {
@@ -100,4 +102,72 @@ const SearchForm = () => {
   if (isLoading) {
     return <div>読み込み中・・・</div>;
   }
+
+  return (
+    <form onSubmit={handleSubmit} className={styles.searchForm}>
+      {error && <div className={styles.error}>{error}</div>}
+
+      <div className={styles.searchGrid}>
+        <FormInput
+          label="商品名"
+          name="productName"
+          value={searchParams.productName}
+          onChange={handleChange}
+          placeholder="商品名を入力"
+          disabled={isLoading}
+        />
+        <div className={styles.formGroup}>
+          <label htmlFor="productId">商品カテゴリ</label>
+          <select
+            id="productId"
+            name="productId"
+            value={searchParams.productId}
+            onChange={handleChange}
+            className={styles.select}
+            disabled={isLoading}
+          >
+            <option value="">選択してください</option>
+            {products.map((product) => (
+              <option key={product.productId} value={product.productId}>
+                {product.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <FormInput
+          label="価格"
+          name="priceRange"
+          value={searchParams.priceRange}
+          onChange={handleChange}
+          placeholder="価格を入力"
+          disabled={isLoading}
+        />
+
+        <div className={styles.formGroup}>
+          <label htmlFor="brandId">購入先のコンビニ</label>
+          <select
+            id="brandId"
+            name="brandId"
+            value={searchParams.brandId}
+            onChange={handleChange}
+            className={styles.select}
+            disabled={isLoading}
+          >
+            <option value="">選択してください</option>
+            {brands.map((brand) => (
+              <option key={brand.brandId} value={brand.brandId}>
+                {brand.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" className={styles.searchButton} disabled={isLoading}>
+        {isLoading ? '検索中・・・' : '検索'}
+      </button>
+    </form>
+  );
 };
+
+export default SearchForm;

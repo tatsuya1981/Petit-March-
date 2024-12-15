@@ -2,6 +2,12 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import styles from './index.module.scss';
 import FormInput from '@/components/elements/formInput';
+import { Review } from '@/types';
+
+// 親から渡されるプロップスの型定義
+interface SearchFormProps {
+  onSearch: (data: Review[]) => void;
+}
 
 // 検索パラメータの型定義
 interface SearchParams {
@@ -24,7 +30,7 @@ interface Brand {
 }
 
 // 検索フォームを管理
-const SearchForm = () => {
+const SearchForm = ({ onSearch }: SearchFormProps) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   // 現在の検索条件を保持するための状態管理
@@ -77,8 +83,8 @@ const SearchForm = () => {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reviews`, {
         params: searchParams,
       });
-      // 親コンポーネントでプロップスを後で作成 ⇩
-      // onSearch(response.data)
+      // 親コンポーネントへ検索データをコールバック
+      onSearch(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.response?.data?.message || '検索に失敗しました');

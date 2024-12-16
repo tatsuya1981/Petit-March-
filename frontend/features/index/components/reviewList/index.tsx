@@ -25,7 +25,7 @@ const ReviewList = ({ reviews }: ReviewListProps) => {
           <div className={styles.content}>
             <p className={styles.productInfo}>
               {review.productName}
-              {review.price && ` - ¥${review.content}`}
+              {review.price && ` - ¥${review.price}`}
             </p>
             <p className={styles.reviewText}>{review.content}</p>
           </div>

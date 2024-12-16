@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import styles from './page.module.scss';
 import SearchForm from '@/../../features/index/components/searchForm';
@@ -20,3 +22,5 @@ const Home = () => {
     </main>
   );
 };
+
+export default Home;

@@ -2,7 +2,9 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import styles from './index.module.scss';
 import FormInput from '@/components/elements/formInput';
+import FormSelect from '@/components/elements/formSelect';
 import { Review } from '@/types';
+import { label } from 'framer-motion/client';
 
 // 親から渡されるプロップスの型定義
 interface SearchFormProps {
@@ -105,6 +107,21 @@ const SearchForm = ({ onSearch }: SearchFormProps) => {
     }));
   };
 
+  // FormSelectコンポーネントで使用するオプションの形式に変換する関数
+  const formatProductOptions = (products: Product[]) => {
+    return products.map((product) => ({
+      value: product.productId.toString(),
+      label: product.name,
+    }));
+  };
+
+  const formatBrandOptions = (brands: Brand[]) => {
+    return brands.map((brand) => ({
+      value: brand.brandId.toString(),
+      label: brand.name,
+    }));
+  };
+
   if (isLoading) {
     return <div>読み込み中・・・</div>;
   }
@@ -122,24 +139,16 @@ const SearchForm = ({ onSearch }: SearchFormProps) => {
           placeholder="商品名を入力"
           disabled={isLoading}
         />
-        <div className={styles.formGroup}>
-          <label htmlFor="productId">商品カテゴリ</label>
-          <select
-            id="productId"
-            name="productId"
-            value={searchParams.productId}
-            onChange={handleChange}
-            className={styles.select}
-            disabled={isLoading}
-          >
-            <option value="">選択してください</option>
-            {products.map((product) => (
-              <option key={product.productId} value={product.productId}>
-                {product.name}
-              </option>
-            ))}
-          </select>
-        </div>
+
+        <FormSelect
+          label="商品カテゴリ"
+          name="productId"
+          value={searchParams.productId}
+          onChange={handleChange}
+          options={formatProductOptions(products)}
+          disabled={isLoading}
+        />
+
         <FormInput
           label="価格"
           name="priceRange"
@@ -149,24 +158,14 @@ const SearchForm = ({ onSearch }: SearchFormProps) => {
           disabled={isLoading}
         />
 
-        <div className={styles.formGroup}>
-          <label htmlFor="brandId">購入先のコンビニ</label>
-          <select
-            id="brandId"
-            name="brandId"
-            value={searchParams.brandId}
-            onChange={handleChange}
-            className={styles.select}
-            disabled={isLoading}
-          >
-            <option value="">選択してください</option>
-            {brands.map((brand) => (
-              <option key={brand.brandId} value={brand.brandId}>
-                {brand.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FormSelect
+          label="購入先のコンビニ"
+          name="brandId"
+          value={searchParams.brandId}
+          onChange={handleChange}
+          options={formatBrandOptions(brands)}
+          disabled={isLoading}
+        />
       </div>
 
       <button type="submit" className={styles.searchButton} disabled={isLoading}>

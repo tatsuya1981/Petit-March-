@@ -24,10 +24,10 @@ const ReviewList = ({ reviews }: ReviewListProps) => {
           </div>
           <div className={styles.content}>
             <p className={styles.productInfo}>
-              {review.productName}
-              {review.price && ` - ¥${review.price}`}
+              <p className={styles.productName}>{review.productName}</p>
+              <p className={styles.productPrice}>{review.price && `商品の値段 - ¥${review.price}`}</p>
+              <p className={styles.reviewText}>{review.content}</p>
             </p>
-            <p className={styles.reviewText}>{review.content}</p>
           </div>
           <div className={styles.footer}>
             <time className={styles.date}>{new Date(review.createdAt).toLocaleDateString('ja-JP')}</time>

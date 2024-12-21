@@ -15,7 +15,8 @@ interface SearchFormProps {
 interface SearchParams {
   productName: string;
   productId: string;
-  priceRange: string;
+  priceMin?: string;
+  priceMax?: string;
   brandId: string;
 }
 
@@ -39,7 +40,8 @@ const SearchForm = ({ onSearch }: SearchFormProps) => {
   const [searchParams, setSearchParams] = useState<SearchParams>({
     productName: '',
     productId: '',
-    priceRange: '',
+    priceMin: '',
+    priceMax: '',
     brandId: '',
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -101,6 +103,13 @@ const SearchForm = ({ onSearch }: SearchFormProps) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    // 価格入力のバリデーション
+    if ((name === 'priceMin' || name === 'priceMax') && value !== '') {
+      const numValue = parseFloat(value);
+      if (isNaN(numValue) || numValue < 0) {
+        return;
+      }
+    }
     setSearchParams((prev) => ({
       ...prev,
       [name]: value,
@@ -149,14 +158,31 @@ const SearchForm = ({ onSearch }: SearchFormProps) => {
           disabled={isLoading}
         />
 
-        <FormInput
-          label="価格"
-          name="priceRange"
-          value={searchParams.priceRange}
-          onChange={handleChange}
-          placeholder="価格を入力"
-          disabled={isLoading}
-        />
+        <div className={styles.priceRangeContainer}>
+          <div className={styles.priceInputs}>
+            <FormInput
+              label="最小価格"
+              name="priceMin"
+              value={searchParams.priceMin}
+              onChange={handleChange}
+              placeholder="¥ 最小"
+              type="number"
+              min="0"
+              disabled={isLoading}
+            />
+            <span className={styles.rangeSeparator}>〜</span>
+            <FormInput
+              label="最大価格"
+              name="priceMax"
+              value={searchParams.priceMax}
+              onChange={handleChange}
+              placeholder="¥ 最大"
+              type="number"
+              min="0"
+              disabled={isLoading}
+            />
+          </div>
+        </div>
 
         <FormSelect
           label="購入先のコンビニ"

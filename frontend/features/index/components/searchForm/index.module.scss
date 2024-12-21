@@ -20,6 +20,38 @@
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
+
+  .priceRangeContainer {
+    grid-column: span 2;
+    @include mx.min('md') {
+      grid-column: span 1;
+    }
+
+    .priceInputs {
+      display: flex;
+      align-items: flex-end;
+      gap: 1rem;
+
+      // FormInputコンポーネントのラッパー
+      > :global(.form) {
+        flex: 1;
+        margin-bottom: 0;
+      }
+      @include mx.min('md') {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+      }
+
+      .rangeSeparator {
+        margin-bottom: 1.3rem;
+        color: rgb(var(--color-bg-accent-dark-brown));
+        @include mx.min('md') {
+          display: none;
+        }
+      }
+    }
+  }
 }
 
 .searchButton {

@@ -78,7 +78,19 @@ const SearchForm = ({ onSearch }: SearchFormProps) => {
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    // ブラウザのデフォルトの挙動を抑制し、送信時にページがリロードされないようにする
     e.preventDefault();
+
+    // 価格範囲のバリデーション
+    if (searchParams.priceMin && searchParams.priceMax) {
+      const minPrice = searchParams.priceMin ? parseFloat(searchParams.priceMin) : null;
+      const maxPrice = searchParams.priceMax ? parseFloat(searchParams.priceMax) : null;
+      if (minPrice !== null && maxPrice !== null && minPrice > maxPrice) {
+        setError('最小価格は最大価格を超えることはできません');
+        return;
+      }
+    }
+
     setIsLoading(true);
     setError(null);
 
@@ -107,6 +119,7 @@ const SearchForm = ({ onSearch }: SearchFormProps) => {
     if ((name === 'priceMin' || name === 'priceMax') && value !== '') {
       const numValue = parseFloat(value);
       if (isNaN(numValue) || numValue < 0) {
+        setError('価格は０以上の数値を入力してください');
         return;
       }
     }

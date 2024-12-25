@@ -1,1 +1,15 @@
-@use '../../styles/mixins.scss' as mx;
+@use '../../../styles/mixins.scss' as mx;
+
+.main {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+
+  .reviewDetail {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}

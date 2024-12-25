@@ -25,30 +25,46 @@ export interface CustomMulterFile extends Express.Multer.File {
 
 // レビュー獲得
 export const get = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const reviewId = parseInt(req.params.id, 10);
   try {
+    console.log('Request params:', req.params);
+    const reviewId = parseInt(req.params.id, 10);
+    // パースしたIDログの出力
+    console.log('Parsed reviewId:', reviewId);
+
+    if (isNaN(reviewId)) {
+      throw new AppError('Invalid review ID', 400);
+    }
+
     const review = await reviewModel.findById(reviewId);
-    // モデルの処理で返却値がundefinedかAppErrorのインスタンスであった場合の処理
-    if (!review || review instanceof AppError || !review.images) {
-      res.status(400).json({ error: 'Review not found or invalid request' });
+    // 取得したレビューをログに出力
+    console.log('Retrieved review:', review);
+
+    if (!review) {
+      res.status(404).json({ error: 'Review not found' });
       return;
     }
 
-    // 並列処理で全てのURLをまとめて処理
-    review.images = await Promise.all(
-      review.images.map(async (img) => ({
-        ...img,
-        imageUrl: await S3Service.getSignedS3Url(img.imageUrl),
-      })),
-    );
+    if (review instanceof AppError) {
+      next(review);
+      return;
+    }
 
+    // 画像のURLを処理
+    if (review.images && review.images.length > 0) {
+      const processedImages = await Promise.all(
+        review.images.map(async (img) => ({
+          ...img,
+          imageUrl: await S3Service.getSignedS3Url(img.imageUrl),
+        })),
+      );
+      review.images = processedImages;
+    }
+
+    console.log('Sending response:', review);
     res.json(review);
   } catch (error) {
-    if (error instanceof Error) {
-      next(new AppError(error.message, 400));
-    } else {
-      next(error);
-    }
+    console.error('Error in get review:', error);
+    next(new AppError(error instanceof Error ? error.message : 'Unknown error', 400));
   }
 };
 

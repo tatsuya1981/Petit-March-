@@ -12,6 +12,7 @@ const ReviewDetail = () => {
   const [review, setReview] = useState<Review | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     const fetchReview = async () => {
@@ -28,19 +29,17 @@ const ReviewDetail = () => {
 
         const response = await axios.get(url);
         // レスポンスデータの詳細をログ出力
-        console.log('Full API Response:', {
-          status: response.status,
-          headers: response.headers,
-          data: response.data,
-        });
-
-        // データの形式を確認
-        if (!response.data || !response.data.title) {
-          console.error('Invalid review data received:', response.data);
+        console.log('Response data:', response.data);
+        // response.dataではなく、response.data.rawを使用
+        if (response.data && response.data.raw) {
+          const reviewData = {
+            ...response.data.raw,
+            images: response.data.images,
+          };
+          setReview(reviewData);
+        } else {
           setError('レビューデータの形式が不正です');
-          return;
         }
-        setReview(response.data);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error('Axios error:', {
@@ -58,6 +57,16 @@ const ReviewDetail = () => {
     };
     fetchReview();
   }, [reviewId]);
+
+  // エラー状態の画像は再処理しない
+  const handleImageError = (imageId: number) => {
+    if (!imageErrors[imageId]) {
+      setImageErrors((prev) => ({
+        ...prev,
+        [imageId]: true,
+      }));
+    }
+  };
 
   // 日付のフォーマットを処理する関数
   const formatDate = (dateString: string) => {
@@ -102,16 +111,20 @@ const ReviewDetail = () => {
             <h2 className={styles.sectionTitle}>商品画像</h2>
             <div className={styles.imageGrid}>
               {review.images.map((image) => (
-                <img
-                  key={image.id}
-                  src={image.imageUrl}
-                  alt={review.productName || '商品画像'}
-                  className={styles.image}
-                  onError={(e) => {
-                    console.error('Image loading error:', image.imageUrl);
-                    e.currentTarget.src = '/placeholder-image.jpg'; // プレースホルダー画像を設定
-                  }}
-                />
+                <div key={image.id} className={styles.imageWrapper}>
+                  {!imageErrors[image.id] ? (
+                    <img
+                      src={image.imageUrl}
+                      alt={review.productName}
+                      className={styles.image}
+                      onError={() => handleImageError(image.id)}
+                    />
+                  ) : (
+                    <div className={styles.imagePlaceholder}>
+                      <span>画像を読み込めません</span>
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>

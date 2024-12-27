@@ -11,12 +11,13 @@ services:
       - prisma_generated:/app/node_modules/.prisma
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - app-network
-    command: sh ./start.sh
+    command: sh -c "npx prisma migrate deploy && sh ./start.sh"
 
   db:
     image: postgres:16
@@ -30,6 +31,11 @@ services:
       - "5432:5432"
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 networks:
   app-network:

@@ -4,62 +4,81 @@ import { BUCKET_NAME, s3Client } from '../config/s3Client';
 import { v4 } from 'uuid';
 
 class S3Service {
-  // プライベートファイルへ一時的にアクセスする関数
-  static getSignedS3Url = async (key: string): Promise<string> => {
-    const command = new GetObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: key,
-    });
-
-    // 署名付きURLを生成して文字列として返す
+  static getSignedS3Url = async (url: string): Promise<string> => {
     try {
-      return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+      // URLからキーを抽出
+      const key = this.extractKeyFromUrl(url);
+      console.log('Extracted key:', key); // デバッグログ
+
+      const command = new GetObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: key,
+      });
+
+      const signedUrl = await getSignedUrl(s3Client, command, {
+        expiresIn: 3600, // 1時間
+      });
+
+      return signedUrl;
     } catch (error) {
       console.error('Error generating signed URL:', error);
-      throw new Error('Failed to generate signed URL');
+      return url; // エラー時は元のURLを返す
     }
   };
+
+  // URLからS3のキーを抽出するヘルパー関数
+  private static extractKeyFromUrl(url: string): string {
+    try {
+      if (url.includes('amazonaws.com')) {
+        const urlObj = new URL(url);
+        const pathParts = urlObj.pathname.split('/');
+        return pathParts.slice(1).join('/');
+      }
+      return url;
+    } catch (error) {
+      console.error('Error extracting key from URL:', error);
+      throw new Error('Invalid S3 URL format');
+    }
+  }
 
   static uploadToS3 = async (file: Express.Multer.File): Promise<string> => {
-    // ユニークなファイル名を生成
-    const key = `reviews/${v4()}-${file.originalname}`;
-
-    // S3へアップロードするためのデータ
-    const command = new PutObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: key,
-      Body: file.buffer,
-      ContentType: file.mimetype,
-      ACL: 'private',
-    });
     try {
-      // S3へファイルをアップロード
+      // ファイル名から特殊文字を除去
+      const sanitizedFileName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '');
+      const key = `reviews/${v4()}-${sanitizedFileName}`;
+
+      const command = new PutObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: key,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+        ACL: 'private',
+      });
+
       await s3Client.send(command);
-      // アップロードしたファイルのURLを返す
-      return `https://${BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+
+      // キーを返すように変更（フルURLではなく）
+      return key;
     } catch (error) {
       console.error('Error uploading to S3:', error);
-      throw new Error('Failed to upload file');
+      throw new Error('Failed to upload file to S3');
     }
   };
 
-  // S3から画像データを削除する関数
   static deleteS3Object = async (imageUrl: string): Promise<void> => {
-    // URLをスラッシュで分割して配列にする処理
-    const urlParts = imageUrl.split('/');
-    // URLを分割した配列から４番目の要素から最後までの要素を取得して再度スラッシュで結合
-    const key = urlParts.slice(3).join('/');
-
-    const command = new DeleteObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: key,
-    });
-
     try {
+      const key = this.extractKeyFromUrl(imageUrl);
+
+      const command = new DeleteObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: key,
+      });
+
       await s3Client.send(command);
       console.log(`Successfully deleted object from S3: ${key}`);
     } catch (error) {
-      throw new Error(`Failed to delete object from S3: ${key}`);
+      console.error('Error deleting from S3:', error);
+      throw new Error(`Failed to delete object from S3: ${imageUrl}`);
     }
   };
 }

@@ -4,7 +4,6 @@ import styles from './index.module.scss';
 import FormInput from '@/components/elements/formInput';
 import FormSelect from '@/components/elements/formSelect';
 import { Review } from '@/types';
-import { label } from 'framer-motion/client';
 
 // 親から渡されるプロップスの型定義
 interface SearchFormProps {

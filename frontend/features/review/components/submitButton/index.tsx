@@ -134,7 +134,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
 
       if (response.status === 201) {
         alert('レビューを投稿しました！');
-        window.location.href = `/reviews/${response.data.id}`;
+        window.location.href = `/review/${response.data.id}`;
       }
     } catch (error) {
       console.error('Review submission error:', error);

@@ -1,9 +1,14 @@
 import prisma from '../src/config/database';
 
 const main = async () => {
-  // シードデータの初期化
+  // シードデータの初期化（削除は逆順で行う）
+  await prisma.like.deleteMany();
+  await prisma.image.deleteMany();
+  await prisma.review.deleteMany();
+  await prisma.store.deleteMany();
   await prisma.product.deleteMany();
   await prisma.brand.deleteMany();
+  await prisma.user.deleteMany();
 
   // シードデータを定義
   const categories = [
@@ -30,6 +35,20 @@ const main = async () => {
     { brandId: 8, name: 'その他' },
   ];
 
+  // テストユーザーの作成
+  const testUser = await prisma.user.create({
+    data: {
+      name: 'テストユーザー',
+      email: 'test@example.com',
+      passwordDigest: 'hashed_password',
+      isActive: true,
+      generation: 1,
+      gender: '未設定',
+    },
+  });
+
+  console.log('Created test user:', testUser);
+
   // データベースへ挿入
   for (const category of categories) {
     await prisma.product.create({
@@ -37,11 +56,43 @@ const main = async () => {
     });
   }
 
+  console.log('Created products');
+
   for (const brand of brands) {
     await prisma.brand.create({
       data: { brandId: brand.brandId, name: brand.name },
     });
   }
+
+  console.log('Created brands');
+
+  // テスト用のレビューを作成
+  const testReview = await prisma.review.create({
+    data: {
+      userId: testUser.id,
+      productId: 1, // お弁当・おにぎり
+      brandId: 1, // セブンイレブン
+      rating: 5,
+      title: 'テストレビュー',
+      productName: 'テスト商品',
+      price: 500,
+      content: 'これはテストレビューです。',
+      images: {
+        create: [
+          {
+            imageUrl: 'test-image-url',
+            order: 1,
+            isMain: true,
+          },
+        ],
+      },
+    },
+    include: {
+      images: true,
+    },
+  });
+
+  console.log('Created test review:', testReview);
 };
 
 // シードの実行

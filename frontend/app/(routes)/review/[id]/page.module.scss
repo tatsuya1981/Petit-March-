@@ -28,7 +28,7 @@
 }
 
 .rating {
-  background: #f4f4f4;
+  background: rgb(var(--color-bg-accent-pink));
   padding: 0.5rem 1rem;
   border-radius: 8px;
   font-weight: 500;
@@ -66,7 +66,7 @@
 
 .imageWrapper {
   aspect-ratio: 1;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   background: #f4f4f4;
 }

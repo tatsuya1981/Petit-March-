@@ -9,7 +9,7 @@ class S3Service {
       // URLからキーを抽出
       const key = this.extractKeyFromUrl(url);
       console.log('Extracted key:', key); // デバッグログ
-
+      // S3からオブジェクトを取得するコマンドを生成
       const command = new GetObjectCommand({
         Bucket: BUCKET_NAME,
         Key: key,
@@ -30,8 +30,11 @@ class S3Service {
   private static extractKeyFromUrl(url: string): string {
     try {
       if (url.includes('amazonaws.com')) {
+        // 渡されたURLをオブジェクトへ変換する
         const urlObj = new URL(url);
+        // URLのパス部分を/で分割して配列に変換
         const pathParts = urlObj.pathname.split('/');
+        // 先頭の空文字をslice(1)で除外、再び/で結合してS3のキー形式へ
         return pathParts.slice(1).join('/');
       }
       return url;

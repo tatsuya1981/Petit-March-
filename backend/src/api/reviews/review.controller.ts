@@ -23,6 +23,11 @@ export interface CustomMulterFile extends Express.Multer.File {
   isMain: boolean; // メイン画像であるかどうか
 }
 
+export interface PaginationQuery extends SearchParams {
+  page?: string;
+  limit?: string;
+}
+
 // レビュー獲得
 export const get = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -170,6 +175,12 @@ export const remove = async (req: Request, res: Response, next: NextFunction) =>
 // レビュー検索用
 export const search = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    const query = req.query as PaginationQuery;
+
+    // ページネーションパラメータの処理
+    const page = parseInt(query.page || '1');
+    const limit = parseInt(query.limit || '10');
+
     // クエリパラメータから検索条件のデータを抽出してオブジェクトを作成
     const searchParams: SearchParams = {
       productName: req.query.productName as string,
@@ -179,9 +190,17 @@ export const search = async (req: Request, res: Response, next: NextFunction): P
       brandId: req.query.brandId ? parseInt(req.query.brandId as string) : undefined,
     };
     // モデルへオブジェクトを渡してレビューを検索
-    const reviews = await reviewModel.searchReviews(searchParams);
+    const searchResult = await reviewModel.searchReviews(searchParams, page, limit);
     // JSON形式に変換してレスポンスとしてフロントエンドへ渡す
-    res.json(reviews);
+    res.json({
+      reviews,
+      pagination: {
+        currentPage: page,
+        limit,
+        totalPages: pagination.totalPages,
+        totalItems: pagination.totalItems,
+      },
+    });
   } catch (error) {
     // JavaScriptの組み込みErrorかチェック
     if (error instanceof Error) {

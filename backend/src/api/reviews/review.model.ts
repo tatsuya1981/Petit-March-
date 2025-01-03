@@ -66,6 +66,11 @@ export const processImages = async (files: CustomMulterFile[]) => {
   return [];
 };
 
+interface PaginationResult {
+  totalPages: number;
+  totalItems: number;
+}
+
 export class ReviewModel {
   raw: ReviewWithImages;
   images: Image[];
@@ -196,7 +201,11 @@ export class ReviewModel {
     });
   };
   // レビュー検索
-  static searchReviews = async (params: SearchParams): Promise<ReviewWithImages[]> => {
+  static searchReviews = async (
+    params: SearchParams,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ reviews: ReviewWithImages[]; pagination: PaginationResult }> => {
     // Prismaのwhereクエリを動的に構築
     const where: Prisma.ReviewWhereInput = {};
     if (params.productName) {

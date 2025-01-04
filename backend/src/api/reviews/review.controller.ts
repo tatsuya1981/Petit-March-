@@ -193,12 +193,12 @@ export const search = async (req: Request, res: Response, next: NextFunction): P
     const searchResult = await reviewModel.searchReviews(searchParams, page, limit);
     // JSON形式に変換してレスポンスとしてフロントエンドへ渡す
     res.json({
-      reviews,
+      reviews: searchResult.reviews,
       pagination: {
         currentPage: page,
         limit,
-        totalPages: pagination.totalPages,
-        totalItems: pagination.totalItems,
+        totalPages: searchResult.pagination.totalPages,
+        totalItems: searchResult.pagination.totalItems,
       },
     });
   } catch (error) {

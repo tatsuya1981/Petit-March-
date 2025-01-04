@@ -236,21 +236,32 @@ export class ReviewModel {
       }
     }
     // レビューを検索
-    const reviews = await prisma.review.findMany({
+    const [totalItems, reviews] = await Promise.all([
       // 検索条件を含んだwhereオブジェクト
-      where,
-      // 該当レビューに関連する画像などを取得する
-      include: {
-        images: true,
-        brand: true,
-        product: true,
+      prisma.review.count({ where }),
+      prisma.review.findMany({
+        where,
+        // 該当レビューに関連する画像などを取得する
+        include: {
+          images: true,
+          brand: true,
+          product: true,
+        },
+        // 作成された順にレビューを並び替え
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+    ]);
+    return {
+      reviews,
+      pagination: {
+        totalPages: Math.ceil(totalItems / limit),
+        totalItems,
       },
-      // 作成された順にレビューを並び替え
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-    return reviews;
+    };
   };
 }
 

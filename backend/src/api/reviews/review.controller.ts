@@ -1,7 +1,7 @@
 // HTTPレスポンスとリクエストの処理を記述
 
 import { Request, Response, NextFunction } from 'express';
-import reviewModel from './review.model';
+import reviewModel, { SearchResult } from './review.model';
 import { AppError } from '../../middleware/errorHandler';
 import multer from 'multer';
 import { Review } from '@prisma/client';
@@ -190,7 +190,7 @@ export const search = async (req: Request, res: Response, next: NextFunction): P
       brandId: req.query.brandId ? parseInt(req.query.brandId as string) : undefined,
     };
     // モデルへオブジェクトを渡してレビューを検索
-    const searchResult = await reviewModel.searchReviews(searchParams, page, limit);
+    const searchResult: SearchResult = await reviewModel.searchReviews(searchParams, page, limit);
     // JSON形式に変換してレスポンスとしてフロントエンドへ渡す
     res.json({
       reviews: searchResult.reviews,

@@ -71,6 +71,11 @@ interface PaginationResult {
   totalItems: number;
 }
 
+export interface SearchResult {
+  reviews: ReviewWithImages[];
+  pagination: PaginationResult;
+}
+
 export class ReviewModel {
   raw: ReviewWithImages;
   images: Image[];

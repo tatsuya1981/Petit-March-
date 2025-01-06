@@ -36,3 +36,10 @@ export interface Review {
   brand?: Brand;
   product: Product;
 }
+
+export interface PaginationInfo {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  limit: number;
+}

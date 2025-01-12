@@ -24,4 +24,6 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
     }
     return range;
   };
+
+  return <nav className={styles.Pagination} role="navigation" aria-label="ページネーション"></nav>;
 };

@@ -25,5 +25,46 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
     return range;
   };
 
-  return <nav className={styles.Pagination} role="navigation" aria-label="ページネーション"></nav>;
+  return (
+    <nav className={styles.Pagination} role="navigation" aria-label="ページネーション">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className={styles.pageButton}
+        aria-label="前のページへ"
+      >
+        前へ
+      </button>
+
+      <div className={styles.pageNumbers}>
+        {getPageNumbers().map((number, index) =>
+          number === '...' ? (
+            <span key={`dots-${index}`} className={styles.dots}>
+              ...
+            </span>
+          ) : (
+            <button
+              key={number}
+              onClick={() => onPageChange(number as number)}
+              className={`${styles.pageButton} ${currentPage === number ? styles.active : ''}`}
+              aria-current={currentPage === number ? 'page' : undefined}
+            >
+              {number}
+            </button>
+          ),
+        )}
+      </div>
+
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className={styles.pageButton}
+        aria-label="次のページへ"
+      >
+        次へ
+      </button>
+    </nav>
+  );
 };
+
+export default Pagination;
